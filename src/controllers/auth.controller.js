@@ -40,3 +40,32 @@ export const register = async (req, res) => {
     });
   }
 };
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(500).send({
+        message: "User not found",
+      });
+    }
+
+    if (user.email !== email || user.password != password) {
+      return res.status(500).send({
+        message: "Invalid credentials",
+      });
+    }
+    return res.status(200).send({
+      user,
+      message: "Login successfully",
+    });
+  } catch (error) {
+    console.log(error.message);
+
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
