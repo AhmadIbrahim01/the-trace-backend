@@ -58,11 +58,14 @@ export const login = async (req, res) => {
       });
     }
 
-    if (user.email !== email || user.password != password) {
+    const check = await bcrypt.compare(password, user.password);
+
+    if (!check) {
       return res.status(404).send({
         message: "Invalid credentials",
       });
     }
+
     return res.status(200).send({
       user,
       message: "Login successfully",
