@@ -4,7 +4,7 @@ export const register = async (req, res) => {
 
   try {
     if (!firstName || !lastName || !email || !phone || !password) {
-      return res.status(500).send({
+      return res.status(400).send({
         message: "Missing credentials",
       });
     }
@@ -13,14 +13,14 @@ export const register = async (req, res) => {
 
     const userEmail = await User.findOne({ loweredEmail });
     if (userEmail) {
-      return res.status(500).send({
+      return res.status(409).send({
         message: "Email already registered",
       });
     }
 
     const userPhone = await User.findOne({ phone });
     if (userPhone) {
-      return res.status(500).send({
+      return res.status(409).send({
         message: "Phone already registered",
       });
     }
@@ -49,13 +49,13 @@ export const login = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(500).send({
+      return res.status(404).send({
         message: "User not found",
       });
     }
 
     if (user.email !== email || user.password != password) {
-      return res.status(500).send({
+      return res.status(404).send({
         message: "Invalid credentials",
       });
     }
