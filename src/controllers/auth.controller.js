@@ -9,6 +9,20 @@ export const register = async (req, res) => {
       });
     }
 
+    const userEmail = await User.findOne({ email });
+    if (userEmail) {
+      return res.status(500).send({
+        message: "Email already registered",
+      });
+    }
+
+    const userPhone = await User.findOne({ phone });
+    if (userPhone) {
+      return res.status(500).send({
+        message: "Phone already registered",
+      });
+    }
+
     const user = await User.create({
       firstName,
       lastName,
