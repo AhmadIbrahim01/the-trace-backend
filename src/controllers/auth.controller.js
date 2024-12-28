@@ -9,7 +9,9 @@ export const register = async (req, res) => {
       });
     }
 
-    const userEmail = await User.findOne({ email });
+    const loweredEmail = email.toLowerCase();
+
+    const userEmail = await User.findOne({ loweredEmail });
     if (userEmail) {
       return res.status(500).send({
         message: "Email already registered",
@@ -26,7 +28,7 @@ export const register = async (req, res) => {
     const user = await User.create({
       firstName,
       lastName,
-      email,
+      email: loweredEmail,
       phone,
       password,
     });
