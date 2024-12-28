@@ -1,4 +1,7 @@
-export const authMiddleware = (req, res, next) => {
+import jwt from "jsonwebtoken";
+import { User } from "../models/user.model.js";
+
+export const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -18,6 +21,14 @@ export const authMiddleware = (req, res, next) => {
   const token = spiltted[1];
 
   try {
+    const payload = await jwt.verify(token, process.env.JWT_SECRET);
+
+    const id = payload.id;
+
+    const user = await User.findById(id);
+
+    req.user = user;
+
     next();
   } catch (error) {
     return res.status(500).send({
