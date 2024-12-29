@@ -59,3 +59,24 @@ export const getCases = async (req, res) => {
     });
   }
 };
+
+export const getCase = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const getCase = await Case.findById(id);
+    if (!getCase) {
+      return res.status(500).send({
+        message: "Case is not found",
+      });
+    }
+
+    return res.status(200).send(getCase);
+  } catch (error) {
+    console.log(error.message);
+
+    return res.status({
+      message: "Error happened",
+    });
+  }
+};
