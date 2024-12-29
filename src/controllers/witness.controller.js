@@ -90,6 +90,32 @@ export const getWitnesses = async (req, res) => {
   try {
     const caseId = req.params.id;
     const getCase = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+    const witnesses = getCase.witnesses;
+
+    if (witnesses.length == 0) {
+      return res.status(400).send({
+        message: "No witnesses",
+      });
+    }
+
+    return res.status(200).send({ witnesses });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
+
+export const getWitness = async (req, res) => {
+  try {
+    const caseId = req.params.id;
+    const getCase = await Case.findById(caseId);
 
     const witnesses = getCase.witnesses;
 
