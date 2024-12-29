@@ -18,10 +18,10 @@ app.use(
   })
 );
 
-app.use("/auth", authRouter);
-app.use("/testimonial", testimonialRouter);
-app.use("/case", caseRouter);
-app.use("/witness", witnessRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/testimonial", testimonialRouter);
+app.use("/api/case", caseRouter);
+app.use("/api/witness", witnessRouter);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running on port ${process.env.SERVER_PORT}`);
