@@ -1,7 +1,7 @@
 import Case from "../models/case.model.js";
 
 export const addWitness = async (req, res) => {
-  const id = req.params.id;
+  const userId = req.params.id;
 
   const { name, phone, age, gender, address } = req.body;
 
@@ -15,7 +15,7 @@ export const addWitness = async (req, res) => {
       createdAt: new Date(),
     };
 
-    const createWitness = await Case.findById(id);
+    const createWitness = await Case.findById(userId);
 
     createWitness.witnesses.push(newWitness);
 
@@ -27,6 +27,56 @@ export const addWitness = async (req, res) => {
       age,
       gender,
       address,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
+
+export const updateWitness = async (req, res) => {
+  try {
+    const { caseId, witnessId } = req.params;
+    const { name, phone, age, gender, address } = req.body;
+    if (!name || !phone || !age || !gender || !address) {
+      return res.status(400).send({
+        message: "All fields are required to update the witness",
+      });
+    }
+    const caseData = await Case.findById(caseId);
+
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+    const witnessIndex = caseData.witnesses.findIndex(
+      (witness) => witness._id.toString() === witnessId
+    );
+
+    if (witnessIndex === -1) {
+      return res.status(404).json({
+        message: "Witness not found in this case",
+      });
+    }
+    caseData.witnesses[witnessIndex] = {
+      ...caseData.witnesses[witnessIndex],
+      _id: witnessId,
+      name,
+      phone,
+      age,
+      gender,
+      address,
+      updatedAt: new Date(),
+    };
+
+    await caseData.save();
+
+    res.status(200).json({
+      message: "Witness updated successfully",
+      case: caseData,
     });
   } catch (error) {
     console.log(error.message);
