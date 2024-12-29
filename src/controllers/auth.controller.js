@@ -72,8 +72,6 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    console.log(token);
-
     return res.status(200).send({
       user,
       token,
