@@ -121,7 +121,41 @@ export const updateCase = async (req, res) => {
       });
     }
 
-    return res.status(200).send(updated);
+    return res.status(201).send({
+      message: "Case updated successfully",
+      updated,
+    });
+  } catch (error) {
+    console.log(error.message);
+
+    return res.status({
+      message: "Error happened",
+    });
+  }
+};
+
+export const deleteCase = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    if (!id) {
+      return res.status(400).send({
+        message: "ID is required",
+      });
+    }
+
+    const deleted = await Case.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    return res.status(201).send({
+      message: "Case deleted successfully",
+      deleted,
+    });
   } catch (error) {
     console.log(error.message);
 
