@@ -80,3 +80,53 @@ export const getCase = async (req, res) => {
     });
   }
 };
+
+export const updateCase = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    if (!id) {
+      return res.status(400).send({
+        messgae: "Please provide an id",
+      });
+    }
+
+    const {
+      title,
+      description,
+      assignedInvestigator,
+      status,
+      caseImages,
+      visibility,
+      tags,
+    } = req.body;
+
+    const updated = await Case.findByIdAndUpdate(
+      id,
+      {
+        title,
+        description,
+        assignedInvestigator,
+        status,
+        caseImages,
+        visibility,
+        tags,
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    return res.status(200).send(updated);
+  } catch (error) {
+    console.log(error.message);
+
+    return res.status({
+      message: "Error happened",
+    });
+  }
+};
