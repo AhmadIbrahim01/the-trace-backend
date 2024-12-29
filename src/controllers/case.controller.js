@@ -11,23 +11,30 @@ export const createCase = async (req, res) => {
     tags,
   } = req.body;
 
-  if (!title || !description || !assignedInvestigator || !caseImages) {
+  try {
+    if (!title || !description || !assignedInvestigator || !caseImages) {
+      return res.status(500).send({
+        message: "Incompete data",
+      });
+    }
+
+    const newCase = await Case.create({
+      title,
+      description,
+      assignedInvestigator,
+      status,
+      caseImages,
+      visibility,
+      tags,
+    });
+
+    return res.status(201).send({
+      newCase,
+    });
+  } catch (error) {
+    console.log(error.message);
     return res.status(500).send({
-      message: "Incompete data",
+      message: "Error happened",
     });
   }
-
-  const newCase = await Case.create({
-    title,
-    description,
-    assignedInvestigator,
-    status,
-    caseImages,
-    visibility,
-    tags,
-  });
-
-  return res.status(201).send({
-    newCase,
-  });
 };
