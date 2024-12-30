@@ -149,3 +149,42 @@ export const getComment = async (req, res) => {
     });
   }
 };
+
+export const likeComment = async (req, res) => {
+  const { caseId, commentId } = req.params;
+
+  try {
+    const caseData = await Case.findById(caseId);
+
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const comments = caseData.comments;
+
+    const commentIndex = comments.findIndex(
+      (comment) => comment._id.toString() === commentId
+    );
+
+    if (commentIndex === -1) {
+      return res.status(404).send({
+        message: "Comment not found",
+      });
+    }
+
+    const updatedComment = comments[commentIndex];
+    updatedComment.likes += 1;
+    await caseData.save();
+    return res.status(201).send({
+      message: "Like added successfully",
+      updatedComment,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
