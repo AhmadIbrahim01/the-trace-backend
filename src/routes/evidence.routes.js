@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { addEvidence } from "../controllers/evidence.controller.js";
+import {
+  addEvidence,
+  updateEvidence,
+} from "../controllers/evidence.controller.js";
 
 const evidenceRouter = new Router();
 
 evidenceRouter.post("/:caseId?", addEvidence);
+evidenceRouter.put("/:caseId/:evidenceId?", updateEvidence);
 
 export default evidenceRouter;
