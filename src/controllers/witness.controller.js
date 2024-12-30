@@ -6,6 +6,17 @@ export const addWitness = async (req, res) => {
   const { name, phone, age, gender, address } = req.body;
 
   try {
+    if (!caseId) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    if (!name || !phone || !age) {
+      return res.status(400).send({
+        message: "Incomplete data",
+      });
+    }
     const newWitness = {
       name,
       phone,
