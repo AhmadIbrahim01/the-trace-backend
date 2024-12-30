@@ -188,3 +188,28 @@ export const likeComment = async (req, res) => {
     });
   }
 };
+
+export const deleteAllComments = async (req, res) => {
+  const caseId = req.params.caseId;
+
+  try {
+    const caseData = await Case.findById(caseId);
+
+    if (!caseData) {
+      return res.status(404).send({
+        messaeg: "Case not found",
+      });
+    }
+
+    caseData.comments = [];
+    await caseData.save();
+    return res.status(200).send({
+      message: "All comments deleted successfully.",
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
