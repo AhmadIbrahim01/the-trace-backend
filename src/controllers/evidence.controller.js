@@ -29,14 +29,69 @@ export const addEvidence = async (req, res) => {
       newEvidence,
     });
   } catch (error) {
-    console.error("Error adding evidence:", error.message);
+    console.error(error.message);
     return res.status(500).send({
-      message: "An error occurred. Please try again later.",
+      message: "Error happened",
     });
   }
 };
 
-export const updateEvidence = async (req, res) => {};
+export const updateEvidence = async (req, res) => {
+  const { caseId, evidenceId } = req.params;
+  const { type, description, location, collectedAt, photo } = req.body;
+
+  try {
+    if (!type || !description || !location || !collectedAt) {
+      return res.status(400).send({
+        message: "Incomplete data",
+      });
+    }
+
+    const caseData = await Case.findById(caseId);
+
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const evidenceIndex = caseData.evidence.findIndex(
+      (evidence) => evidence._id.toString() === evidenceId
+    );
+
+    if (evidenceIndex === -1) {
+      return res.status(404).send({
+        message: "Evidence not found",
+      });
+    }
+
+    const existingEvidence = caseData.evidence[evidenceIndex];
+
+    caseData.evidence[evidenceIndex] = {
+      ...existingEvidence,
+      _id: evidenceId,
+      type,
+      description,
+      location,
+      collectedAt,
+      photo,
+      updatedAt: new Date(),
+    };
+
+    await caseData.save();
+
+    return res.status(201).send({
+      message: "Evidence updated successfully",
+      case: caseData,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
+
 export const getEvidences = async (req, res) => {};
 export const getEvidence = async (req, res) => {};
 export const deleteEvidence = async (req, res) => {};
