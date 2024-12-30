@@ -192,7 +192,7 @@ export const countOpenCases = async (req, res) => {
   } catch (error) {
     console.error(error.message);
     return res.status(500).send({
-      message: "Error happeneds",
+      message: "Error happened",
     });
   }
 };
@@ -208,7 +208,7 @@ export const countClosedCases = async (req, res) => {
   } catch (error) {
     console.error(error.message);
     return res.status(500).send({
-      message: "Error happeneds",
+      message: "Error happened",
     });
   }
 };
@@ -226,7 +226,7 @@ export const countInProgressCases = async (req, res) => {
   } catch (error) {
     console.error(error.message);
     return res.status(500).send({
-      message: "Error happeneds",
+      message: "Error happened",
     });
   }
 };
@@ -242,7 +242,7 @@ export const countSolvedCases = async (req, res) => {
   } catch (error) {
     console.error(error.message);
     return res.status(500).send({
-      message: "Error happeneds",
+      message: "Error happened",
     });
   }
 };
@@ -267,7 +267,7 @@ export const casesStats = async (req, res) => {
   } catch (error) {
     console.error(error.message);
     return res.status(500).send({
-      message: "Error happeneds",
+      message: "Error happened",
     });
   }
 };
