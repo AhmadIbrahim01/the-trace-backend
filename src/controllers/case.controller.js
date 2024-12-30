@@ -199,11 +199,11 @@ export const countOpenCases = async (req, res) => {
 
 export const countClosedCases = async (req, res) => {
   try {
-    const openCasesCount = await Case.countDocuments({ status: "closed" });
+    const closedCasesCount = await Case.countDocuments({ status: "closed" });
 
     return res.status(200).send({
       message: "Count of closed cases retrieved successfully",
-      count: openCasesCount,
+      count: closedCasesCount,
     });
   } catch (error) {
     console.error(error.message);
@@ -215,11 +215,29 @@ export const countClosedCases = async (req, res) => {
 
 export const countInProgressCases = async (req, res) => {
   try {
-    const openCasesCount = await Case.countDocuments({ status: "in_progress" });
+    const inProgressCasesCount = await Case.countDocuments({
+      status: "in_progress",
+    });
 
     return res.status(200).send({
       message: "Count of in progress cases retrieved successfully",
-      count: openCasesCount,
+      count: inProgressCasesCount,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happeneds",
+    });
+  }
+};
+
+export const countSolvedCases = async (req, res) => {
+  try {
+    const solvedCasesCount = await Case.countDocuments({ status: "solved" });
+
+    return res.status(200).send({
+      message: "Count of solved cases retrieved successfully",
+      count: solvedCasesCount,
     });
   } catch (error) {
     console.error(error.message);
