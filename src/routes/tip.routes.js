@@ -1,9 +1,10 @@
 import { Router } from "express";
 
-import { addTip } from "../controllers/tip.controller.js";
+import { addTip, updateTip } from "../controllers/tip.controller.js";
 
 const tipRouter = new Router();
 
 tipRouter.post("/:caseId?", addTip);
+tipRouter.put("/:caseId/:tipId?", updateTip);
 
 export default tipRouter;
