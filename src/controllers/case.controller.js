@@ -212,3 +212,19 @@ export const countClosedCases = async (req, res) => {
     });
   }
 };
+
+export const countInProgressCases = async (req, res) => {
+  try {
+    const openCasesCount = await Case.countDocuments({ status: "in_progress" });
+
+    return res.status(200).send({
+      message: "Count of in progress cases retrieved successfully",
+      count: openCasesCount,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happeneds",
+    });
+  }
+};
