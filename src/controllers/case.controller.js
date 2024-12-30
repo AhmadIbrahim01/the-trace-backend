@@ -164,3 +164,19 @@ export const deleteCase = async (req, res) => {
     });
   }
 };
+
+export const countCases = async (req, res) => {
+  try {
+    const caseCount = await Case.countDocuments();
+
+    return res.status(200).send({
+      message: "Total number of cases retrieved successfully.",
+      totalCases: caseCount,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
