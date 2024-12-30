@@ -173,3 +173,36 @@ export const getSuspects = async (req, res) => {
     });
   }
 };
+
+export const getSuspect = async (req, res) => {
+  const { caseId, suspectId } = req.params;
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const suspects = caseData.suspects;
+
+    if (suspects.length == 0) {
+      return res.status(400).send({
+        message: "No suspects",
+      });
+    }
+
+    const suspectIndex = caseData.suspects.findIndex(
+      (suspect) => suspect._id.toString() === suspectId
+    );
+
+    const suspect = suspects[suspectIndex];
+
+    return res.status(200).send({ suspect });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
