@@ -113,6 +113,35 @@ export const getTips = async (req, res) => {
     });
   }
 };
-export const getTip = async (req, res) => {};
+export const getTip = async (req, res) => {
+  const { caseId, tipId } = req.params;
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const tips = caseData.tips;
+    const tipIndex = tips.findIndex((tip) => tip._id.toString() === tipId);
+
+    if (tipIndex === -1) {
+      return res.status(404).send({
+        message: "Tip not found",
+      });
+    }
+
+    const tip = tips[tipIndex];
+    return res.status(200).send({
+      tip,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
 export const deleteTip = async (req, res) => {};
 export const acceptTip = async (req, res) => {};
