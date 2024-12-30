@@ -68,7 +68,7 @@ export const updateWitness = async (req, res) => {
     );
 
     if (witnessIndex === -1) {
-      return res.status(404).json({
+      return res.status(404).send({
         message: "Witness not found in this case",
       });
     }
@@ -85,7 +85,7 @@ export const updateWitness = async (req, res) => {
 
     await caseData.save();
 
-    res.status(200).json({
+    res.status(200).send({
       message: "Witness updated successfully",
       case: caseData,
     });
@@ -170,7 +170,7 @@ export const deleteWitness = async (req, res) => {
       (witness) => witness._id.toString() === witnessId
     );
     if (witnessIndex === -1) {
-      return res.status(404).json({
+      return res.status(404).send({
         message: "Witness not found in this case",
       });
     }
