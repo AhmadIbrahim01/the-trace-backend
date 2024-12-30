@@ -196,3 +196,19 @@ export const countOpenCases = async (req, res) => {
     });
   }
 };
+
+export const countClosedCases = async (req, res) => {
+  try {
+    const openCasesCount = await Case.countDocuments({ status: "closed" });
+
+    return res.status(200).send({
+      message: "Count of closed cases retrieved successfully",
+      count: openCasesCount,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happeneds",
+    });
+  }
+};
