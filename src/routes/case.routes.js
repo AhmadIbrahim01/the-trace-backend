@@ -6,11 +6,13 @@ import {
   updateCase,
   deleteCase,
   countCases,
+  countOpenCases,
 } from "../controllers/case.controller.js";
 
 const caseRouter = new Router();
 
 caseRouter.get("/count", countCases);
+caseRouter.get("/count/open", countOpenCases);
 caseRouter.post("/", createCase);
 caseRouter.get("/", getCases);
 caseRouter.get("/:id?", getCase);
