@@ -1,6 +1,18 @@
 import mongoose from "mongoose";
 
 const { Schema } = mongoose;
+
+const evidenceSchema = new Schema(
+  {
+    type: { type: String, required: true },
+    description: { type: String, required: true },
+    location: { type: String, required: true },
+    collectedAt: { type: Date, required: true },
+    photo: { type: String },
+  },
+  { timestamps: true }
+);
+
 export const caseSchema = new Schema(
   {
     title: { type: String, required: true },
@@ -86,15 +98,7 @@ export const caseSchema = new Schema(
       },
       { timestamps: true },
     ],
-    evidence: [
-      {
-        type: { type: String, required: true },
-        description: { type: String, required: true },
-        locationOfCollection: { type: String, required: true },
-        collectedAt: { type: Date, required: true },
-        photo: { type: String },
-      },
-    ],
+    evidence: [evidenceSchema],
     comments: [
       {
         userId: {
