@@ -1,7 +1,11 @@
 import { Router } from "express";
-import { addSuspect } from "../controllers/suspect.controller.js";
+import {
+  addSuspect,
+  updateSuspect,
+} from "../controllers/suspect.controller.js";
 const suspectRouter = new Router();
 
 suspectRouter.post("/:caseId?", addSuspect);
+suspectRouter.put("/:caseId/:suspectId?", updateSuspect);
 
 export default suspectRouter;
