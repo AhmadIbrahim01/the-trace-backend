@@ -44,4 +44,45 @@ export const createComment = async (req, res) => {
     });
   }
 };
-export const deleteComment = async (req, res) => {};
+export const deleteComment = async (req, res) => {
+  const { caseId, commentId } = req.params;
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const comments = caseData.comments;
+
+    const commentIndex = comments.findIndex(
+      (comment) => comment._id.toString() === commentId
+    );
+
+    if (commentIndex === -1) {
+      return res.status(404).send({
+        message: "Comment not found",
+      });
+    }
+
+    const deletedComment = comments[commentIndex];
+
+    const updatedComments = comments.filter(
+      (comment) => comment._id.toString() !== commentId
+    );
+
+    caseData.comments = updatedComments;
+    await caseData.save();
+
+    return res.status(200).send({
+      message: "Comment deleted successfully",
+      deletedComment,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
