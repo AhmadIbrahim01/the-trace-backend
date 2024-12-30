@@ -88,14 +88,16 @@ export const updateWitness = async (req, res) => {
 
 export const getWitnesses = async (req, res) => {
   try {
-    const caseId = req.params.id;
-    const getCase = await Case.findById(caseId);
+    const caseId = req.params.caseId;
+    console.log(caseId);
+
+    const caseData = await Case.findById(caseId);
     if (!caseData) {
       return res.status(404).send({
         message: "Case not found",
       });
     }
-    const witnesses = getCase.witnesses;
+    const witnesses = caseData.witnesses;
 
     if (witnesses.length == 0) {
       return res.status(400).send({
@@ -111,21 +113,29 @@ export const getWitnesses = async (req, res) => {
     });
   }
 };
-
 export const getWitness = async (req, res) => {
   try {
-    const caseId = req.params.id;
-    const getCase = await Case.findById(caseId);
-
-    const witnesses = getCase.witnesses;
+    const { caseId, witnessId } = req.params;
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+    const witnesses = caseData.witnesses;
 
     if (witnesses.length == 0) {
       return res.status(400).send({
         message: "No witnesses",
       });
     }
+    const witnessIndex = caseData.witnesses.findIndex(
+      (witness) => witness._id.toString() === witnessId
+    );
 
-    return res.status(200).send({ witnesses });
+    const witness = witnesses[witnessIndex];
+
+    return res.status(200).send({ witness });
   } catch (error) {
     console.log(error.message);
     return res.status(500).send({
