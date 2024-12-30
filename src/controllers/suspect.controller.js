@@ -30,7 +30,11 @@ export const addSuspect = async (req, res) => {
     }
 
     const caseData = await Case.findById(caseId);
-
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
     const newSuspect = {
       name,
       phone,
