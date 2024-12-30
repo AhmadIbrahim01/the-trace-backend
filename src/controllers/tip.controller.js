@@ -179,5 +179,27 @@ export const deleteTip = async (req, res) => {
     });
   }
 };
-export const deleteTips = async (req, res) => {};
+export const deleteTips = async (req, res) => {
+  const caseId = req.params.caseId;
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    caseData.tips = [];
+    await caseData.save();
+
+    return res.status(200).send({
+      message: "Tips deleted successfully",
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
 export const acceptTip = async (req, res) => {};
