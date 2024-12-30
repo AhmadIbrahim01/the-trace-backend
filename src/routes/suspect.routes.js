@@ -3,11 +3,13 @@ import {
   addSuspect,
   updateSuspect,
   getSuspects,
+  getSuspect,
 } from "../controllers/suspect.controller.js";
 const suspectRouter = new Router();
 
 suspectRouter.post("/:caseId?", addSuspect);
 suspectRouter.put("/:caseId/:suspectId?", updateSuspect);
 suspectRouter.get("/:caseId?", getSuspects);
+suspectRouter.get("/:caseId/:suspectId?", getSuspect);
 
 export default suspectRouter;
