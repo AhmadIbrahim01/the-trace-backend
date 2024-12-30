@@ -143,3 +143,44 @@ export const getWitness = async (req, res) => {
     });
   }
 };
+
+export const deleteWitness = async (req, res) => {
+  try {
+    const { caseId, witnessId } = req.params;
+    const caseData = await Case.findById(caseId);
+
+    if (!caseData) {
+      return res.status(400).send({
+        message: "Case not found",
+      });
+    }
+
+    const witnessIndex = caseData.witnesses.findIndex(
+      (witness) => witness._id.toString() === witnessId
+    );
+    if (witnessIndex === -1) {
+      return res.status(404).json({
+        message: "Witness not found in this case",
+      });
+    }
+
+    const witnesses = caseData.witnesses;
+    const witness = witnesses[witnessIndex];
+    const updatedData = witnesses.filter(
+      (witness) => witness._id.toString() !== witnessId
+    );
+
+    caseData.witnesses = updatedData;
+    await caseData.save();
+
+    return res.status(200).send({
+      message: "Witness deleted successfully",
+      witness,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
