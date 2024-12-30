@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { User } from "./user.model.js";
 
 const { Schema } = mongoose;
 
@@ -103,17 +104,18 @@ export const caseSchema = new Schema(
       {
         userId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+          ref: "User", // Reference to User model
           required: true,
         },
         content: { type: String, required: true },
         createdAt: { type: Date, default: Date.now },
+        profilePicture: { type: String },
         likes: { type: Number, default: 0 },
       },
     ],
     tips: [
       {
-        userId: {
+        firstName: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,

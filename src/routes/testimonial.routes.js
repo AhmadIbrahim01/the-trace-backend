@@ -6,7 +6,7 @@ import {
 
 const testimonialRouter = new Router();
 
-testimonialRouter.post("/add", addTestimonial);
-testimonialRouter.get("/get", getTestimonials);
+testimonialRouter.post("/", addTestimonial);
+testimonialRouter.get("/", getTestimonials);
 
 export default testimonialRouter;
