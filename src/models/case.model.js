@@ -124,6 +124,7 @@ export const caseSchema = new Schema(
         file: { type: String },
         locationOfIncident: { type: String },
         dateOfIncident: { type: Date },
+        anonymous: { type: Boolean, default: false },
         accepted: { type: Boolean, default: false },
         createdAt: { type: Date, default: Date.now },
       },
