@@ -143,5 +143,41 @@ export const getTip = async (req, res) => {
     });
   }
 };
-export const deleteTip = async (req, res) => {};
+export const deleteTip = async (req, res) => {
+  const { caseId, tipId } = req.params;
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const tips = caseData.tips;
+    const tipIndex = tips.findIndex((tip) => tip._id.toString() === tipId);
+
+    if (tipIndex === -1) {
+      return res.status(404).send({
+        message: "Tip not found",
+      });
+    }
+
+    const deletedTip = tips[tipIndex];
+    const updatedData = tips.filter((tip) => tip._id.toString() !== tipId);
+
+    caseData.tips = updatedData;
+    await caseData.save();
+
+    return res.status(200).send({
+      message: "Tip deleted successfully",
+      deletedTip,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
+export const deleteTips = async (req, res) => {};
 export const acceptTip = async (req, res) => {};
