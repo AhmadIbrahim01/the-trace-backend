@@ -30,7 +30,7 @@ export const caseSchema = new Schema(
     suspects: [
       {
         name: { type: String, required: true },
-        contactInformation: { type: String, required: true },
+        phone: { type: Number, required: true },
         age: { type: Number, required: true },
         gender: { type: String },
         address: { type: String },

@@ -1,7 +1,7 @@
 import Case from "../models/case.model.js";
 
 export const addWitness = async (req, res) => {
-  const userId = req.params.id;
+  const caseId = req.params.id;
 
   const { name, phone, age, gender, address } = req.body;
 
@@ -15,7 +15,7 @@ export const addWitness = async (req, res) => {
       createdAt: new Date(),
     };
 
-    const createWitness = await Case.findById(userId);
+    const createWitness = await Case.findById(caseId);
 
     createWitness.witnesses.push(newWitness);
 
