@@ -206,3 +206,46 @@ export const getSuspect = async (req, res) => {
     });
   }
 };
+
+export const deleteSuspect = async (req, res) => {
+  const { caseId, suspectId } = req.params;
+
+  try {
+    const caseData = await Case.findById(caseId);
+    console.log(caseData);
+
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const suspects = caseData.suspects;
+
+    const suspectIndex = suspects.findIndex(
+      (suspect) => suspect._id.toString() === suspectId
+    );
+    if (suspectIndex === -1) {
+      return res.status(404).send({
+        message: "Suspect not found in this case",
+      });
+    }
+
+    const suspect = suspects[suspectIndex];
+    const updatedData = suspects.filter(
+      (suspect) => suspect._id.toString() !== suspectId
+    );
+    caseData.suspects = updatedData;
+    await caseData.save();
+
+    return res.status(200).send({
+      message: "Suspect deleted successfully",
+      suspect,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
