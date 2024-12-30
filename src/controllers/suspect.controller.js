@@ -51,7 +51,7 @@ export const addSuspect = async (req, res) => {
     await caseData.save();
 
     return res.status(201).send({
-      messaeg: "Suspect added successfully",
+      message: "Suspect added successfully",
       newSuspect,
     });
   } catch (error) {
@@ -131,6 +131,40 @@ export const updateSuspect = async (req, res) => {
     return res.status(200).send({
       message: "Suspect updated successfully",
       case: caseData,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
+
+export const getSuspects = async (req, res) => {
+  const caseId = req.params.caseId;
+
+  try {
+    if (!caseId) {
+      return res.status(404).send({
+        message: "No case found",
+      });
+    }
+
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const suspects = caseData.suspects;
+    if (suspects.length == 0) {
+      return res.status(400).send({
+        message: "No suspects",
+      });
+    }
+    return res.status(200).send({
+      suspects,
     });
   } catch (error) {
     console.log(error.message);
