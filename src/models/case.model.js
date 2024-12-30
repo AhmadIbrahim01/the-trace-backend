@@ -23,7 +23,7 @@ export const caseSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["open", "closed", "in_progress"],
+      enum: ["open", "closed", "in_progress", "solved"],
       default: "open",
     },
 
