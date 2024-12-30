@@ -92,7 +92,27 @@ export const updateTip = async (req, res) => {
     });
   }
 };
-export const getTips = async (req, res) => {};
+export const getTips = async (req, res) => {
+  const caseId = req.params.caseId;
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const tips = caseData.tips;
+
+    return res.status(200).send({ tips });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
 export const getTip = async (req, res) => {};
 export const deleteTip = async (req, res) => {};
 export const acceptTip = async (req, res) => {};
