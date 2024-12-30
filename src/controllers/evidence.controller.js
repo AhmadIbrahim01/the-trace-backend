@@ -118,5 +118,37 @@ export const getEvidences = async (req, res) => {
     });
   }
 };
-export const getEvidence = async (req, res) => {};
+export const getEvidence = async (req, res) => {
+  const { caseId, evidenceId } = req.params;
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const evidences = caseData.evidence;
+
+    if (evidences.length == 0) {
+      return res.status(400).send({
+        message: "No evidences",
+      });
+    }
+
+    const evidenceIndex = caseData.evidence.findIndex(
+      (evidence) => evidence._id.toString() === evidenceId
+    );
+
+    const evidence = evidences[evidenceIndex];
+
+    return res.status(200).send({ evidence });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
 export const deleteEvidence = async (req, res) => {};
