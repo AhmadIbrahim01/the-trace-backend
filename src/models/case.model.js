@@ -115,7 +115,7 @@ export const caseSchema = new Schema(
     ],
     tips: [
       {
-        firstName: {
+        userId: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,
