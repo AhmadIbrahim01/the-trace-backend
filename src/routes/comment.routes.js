@@ -11,11 +11,11 @@ import {
 const commentRouter = new Router();
 
 commentRouter.post("/:caseId?", createComment);
-// commentRouter.delete("/:caseId/:commentId?", deleteComment);
+commentRouter.delete("/:caseId", deleteAllComments);
+commentRouter.delete("/:caseId/:commentId?", deleteComment);
 commentRouter.get("/:caseId?", getComments);
 commentRouter.get("/:caseId/:commentId?", getComment);
 commentRouter.post("/:caseId/:commentId?", likeComment);
 commentRouter.post("/:caseId/:commentId?", likeComment);
-commentRouter.delete("/:caseId", deleteAllComments);
 
 export default commentRouter;
