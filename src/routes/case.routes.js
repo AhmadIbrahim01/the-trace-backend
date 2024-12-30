@@ -9,6 +9,7 @@ import {
   countOpenCases,
   countClosedCases,
   countInProgressCases,
+  countSolvedCases,
 } from "../controllers/case.controller.js";
 
 const caseRouter = new Router();
@@ -17,6 +18,7 @@ caseRouter.get("/count", countCases);
 caseRouter.get("/count/open", countOpenCases);
 caseRouter.get("/count/closed", countClosedCases);
 caseRouter.get("/count/progress", countInProgressCases);
+caseRouter.get("/count/solved", countSolvedCases);
 caseRouter.post("/", createCase);
 caseRouter.get("/", getCases);
 caseRouter.get("/:id?", getCase);
