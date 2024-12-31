@@ -4,6 +4,7 @@ import {
   updateWitnessStatement,
   deleteWitnessStatement,
   getWitnessStatements,
+  getWitnessStatement,
 } from "../controllers/witness.statements.controller.js";
 
 const witnessStatementsRouter = new Router();
@@ -18,5 +19,9 @@ witnessStatementsRouter.delete(
   deleteWitnessStatement
 );
 witnessStatementsRouter.get("/:caseId/:witnessId?", getWitnessStatements);
+witnessStatementsRouter.get(
+  "/:caseId/:witnessId/:statementId?",
+  getWitnessStatement
+);
 
 export default witnessStatementsRouter;
