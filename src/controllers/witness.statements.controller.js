@@ -8,6 +8,16 @@ export const addWitnessStatement = async (req, res) => {
       message: "Missing case id or witness id",
     });
   }
+  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
+    return res.status(400).send({
+      message: "Invalid caseId format.",
+    });
+  }
+  if (witnessId && !mongoose.Types.ObjectId.isValid(witnessId)) {
+    return res.status(400).send({
+      message: "Invalid witnessId format.",
+    });
+  }
   const {
     userId,
     date,
