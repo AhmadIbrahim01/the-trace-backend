@@ -21,6 +21,19 @@ export const addWitnessStatement = async (req, res) => {
       });
     }
 
+    if (
+      !userId ||
+      !date ||
+      !statement ||
+      !locationOfIncident ||
+      !approximatedAge ||
+      !additionalFeatures
+    ) {
+      return res.status(404).send({
+        message: "Missing data",
+      });
+    }
+
     const witnesses = caseData.witnesses;
     const witnessIndex = witnesses.findIndex(
       (witness) => witness._id.toString() === witnessId
