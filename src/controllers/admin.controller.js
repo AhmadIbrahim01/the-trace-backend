@@ -173,3 +173,23 @@ export const getUser = async (req, res) => {
     });
   }
 };
+
+export const getInvestigators = async (req, res) => {
+  try {
+    const investigators = await User.find({ role: "investigator" });
+    if (investigators.length === 0) {
+      return res.status(200).send({
+        message: "No investigators found",
+      });
+    }
+
+    return res.status(200).send({
+      investigators,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
