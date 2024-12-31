@@ -182,9 +182,10 @@ export const getInvestigators = async (req, res) => {
         message: "No investigators found",
       });
     }
-
+    const totalInvestigatorsNumber = investigators.length;
     return res.status(200).send({
       investigators,
+      totalInvestigatorsNumber,
     });
   } catch (error) {
     console.log(error.message);
