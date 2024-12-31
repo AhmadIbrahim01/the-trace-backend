@@ -10,6 +10,7 @@ import suspectRouter from "./routes/suspect.routes.js";
 import evidenceRouter from "./routes/evidence.routes.js";
 import commentRouter from "./routes/comment.routes.js";
 import tipRouter from "./routes/tip.routes.js";
+import adminRouter from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api/suspect", suspectRouter);
 app.use("/api/evidence", evidenceRouter);
 app.use("/api/comment", commentRouter);
 app.use("/api/tip", tipRouter);
+app.use("/api/admin", adminRouter);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running on port ${process.env.SERVER_PORT}`);
