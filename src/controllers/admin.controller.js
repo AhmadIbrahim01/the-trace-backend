@@ -107,3 +107,29 @@ export const deleteUser = async (req, res) => {
     });
   }
 };
+
+export const toggleBanUser = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const userData = await User.findById(userId);
+
+    if (!userData) {
+      return res.status(404).send({
+        message: "User not found",
+      });
+    }
+
+    userData.banned = !userData.banned;
+    await userData.save();
+
+    return res.status(200).send({
+      userData,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
