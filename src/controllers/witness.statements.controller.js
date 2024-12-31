@@ -287,3 +287,81 @@ export const getWitnessStatements = async (req, res) => {
     });
   }
 };
+
+export const getWitnessStatement = async (req, res) => {
+  const { caseId, witnessId, statementId } = req.params;
+  if (!caseId || !witnessId || !statementId) {
+    return res.status(404).send({
+      message: "Missing required parameters",
+    });
+  }
+  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
+    return res.status(400).send({
+      message: "Invalid caseId format.",
+    });
+  }
+  if (witnessId && !mongoose.Types.ObjectId.isValid(witnessId)) {
+    return res.status(400).send({
+      message: "Invalid witnessId format.",
+    });
+  }
+  if (statementId && !mongoose.Types.ObjectId.isValid(statementId)) {
+    return res.status(400).send({
+      message: "Invalid statementId format.",
+    });
+  }
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const witnesses = caseData.witnesses;
+    if (witnesses.length == 0) {
+      return res.status(400).send({
+        message: "No witnesses",
+      });
+    }
+    const witnessIndex = caseData.witnesses.findIndex(
+      (witness) => witness._id.toString() === witnessId
+    );
+
+    if (witnessIndex === -1) {
+      return res.status(404).send({
+        message: "Witness not found",
+      });
+    }
+    const witness = witnesses[witnessIndex];
+
+    if (witness.statements.length === 0) {
+      return res.status(404).send({
+        message: "No statements found for this witness",
+      });
+    }
+
+    const statementIndex = witness.statements.findIndex(
+      (s) => s._id.toString() === statementId
+    );
+
+    if (statementIndex === -1) {
+      return res.status(404).send({
+        message: "Statement not found",
+      });
+    }
+
+    const statement = witness.statements[statementIndex];
+
+    return res.status(200).send({
+      message: "Witness statement retrieved successfully",
+      statement,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
