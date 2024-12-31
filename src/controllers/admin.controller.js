@@ -194,3 +194,25 @@ export const getInvestigators = async (req, res) => {
     });
   }
 };
+
+export const toggleInvestigator = async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send({
+        message: "User not found",
+      });
+    }
+    user.role = user.role === "public_user" ? "investigator" : "public_user";
+    await user.save();
+    return res.status(200).send({
+      user,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
