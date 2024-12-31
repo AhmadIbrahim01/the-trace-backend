@@ -137,8 +137,34 @@ export const toggleBanUser = async (req, res) => {
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
+    if (users.length === 0) {
+      return res.status(200).send({
+        message: "No users found",
+      });
+    }
+
     return res.status(200).send({
       users,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
+
+export const getUser = async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send({
+        message: "User not found",
+      });
+    }
+    return res.status(200).send({
+      user,
     });
   } catch (error) {
     console.log(error.message);
