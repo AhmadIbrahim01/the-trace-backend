@@ -144,6 +144,11 @@ export const getWitness = async (req, res) => {
       (witness) => witness._id.toString() === witnessId
     );
 
+    if (witnessIndex === -1) {
+      return res.status(404).send({
+        message: "Witness not found",
+      });
+    }
     const witness = witnesses[witnessIndex];
 
     return res.status(200).send({ witness });
