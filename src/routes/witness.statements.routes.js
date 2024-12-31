@@ -3,6 +3,7 @@ import {
   addWitnessStatement,
   updateWitnessStatement,
   deleteWitnessStatement,
+  getWitnessStatements,
 } from "../controllers/witness.statements.controller.js";
 
 const witnessStatementsRouter = new Router();
@@ -16,5 +17,6 @@ witnessStatementsRouter.delete(
   "/:caseId/:witnessId/:statementId?",
   deleteWitnessStatement
 );
+witnessStatementsRouter.get("/:caseId/:witnessId?", getWitnessStatements);
 
 export default witnessStatementsRouter;
