@@ -1,7 +1,13 @@
 import Case from "../models/case.model.js";
+import mongoose from "mongoose";
 
 export const addWitnessStatement = async (req, res) => {
   const { caseId, witnessId } = req.params;
+  if (!caseId || !witnessId) {
+    return res.status(400).send({
+      message: "Missing case id or witness id",
+    });
+  }
   const {
     userId,
     date,
@@ -23,6 +29,12 @@ export const addWitnessStatement = async (req, res) => {
   ) {
     return res.status(400).send({
       message: "Missing required fields",
+    });
+  }
+
+  if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({
+      message: "Invalid userId format.",
     });
   }
 
@@ -141,6 +153,7 @@ export const updateWitnessStatement = async (req, res) => {
 
     const updatedStatement = {
       ...witness.statements[statementIndex],
+      _id: statementId,
       userId,
       date: parsedDate,
       statement,
