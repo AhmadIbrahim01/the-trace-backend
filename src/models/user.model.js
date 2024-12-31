@@ -33,6 +33,7 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
+    banned: { type: Boolean, default: "false" },
   },
   { timestamps: true }
 );

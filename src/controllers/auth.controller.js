@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
-  const { firstName, lastName, email, phone, password } = req.body;
+  const { firstName, lastName, email, phone, password, role } = req.body;
 
   try {
     if (!firstName || !lastName || !email || !phone || !password) {
@@ -36,6 +36,7 @@ export const register = async (req, res) => {
       email: loweredEmail,
       phone,
       password: hashed,
+      role,
     });
 
     return res.status(201).send(user);
