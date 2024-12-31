@@ -34,12 +34,14 @@ export const addWitnessStatement = async (req, res) => {
       });
     }
 
-    const witnesses = caseData.witnesses;
-    const witnessIndex = witnesses.findIndex(
-      (witness) => witness._id.toString() === witnessId
+    const witness = caseData.witnesses.find(
+      (w) => w._id.toString() === witnessId
     );
-
-    const witness = witnesses[witnessIndex];
+    if (!witness) {
+      return res.status(404).json({
+        message: "Witness not found",
+      });
+    }
 
     const newStatement = {
       userId,
