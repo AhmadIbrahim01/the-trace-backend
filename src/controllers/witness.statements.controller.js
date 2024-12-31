@@ -13,20 +13,27 @@ export const addWitnessStatement = async (req, res) => {
     photo,
   } = req.body;
 
-  try {
-    if (
-      !userId ||
-      !date ||
-      !statement ||
-      !locationOfIncident ||
-      !approximatedAge ||
-      !additionalFeatures
-    ) {
-      return res.status(404).send({
-        message: "Missing data",
-      });
-    }
+  if (
+    !userId ||
+    !date ||
+    !statement ||
+    !locationOfIncident ||
+    !approximatedAge ||
+    !additionalFeatures
+  ) {
+    return res.status(400).send({
+      message: "Missing required fields",
+    });
+  }
 
+  const parsedDate = new Date(date);
+  if (isNaN(parsedDate)) {
+    return res.status(400).send({
+      message: "Invalid date format",
+    });
+  }
+
+  try {
     const caseData = await Case.findById(caseId);
     if (!caseData) {
       return res.status(404).send({
@@ -38,14 +45,14 @@ export const addWitnessStatement = async (req, res) => {
       (w) => w._id.toString() === witnessId
     );
     if (!witness) {
-      return res.status(404).json({
+      return res.status(404).send({
         message: "Witness not found",
       });
     }
 
     const newStatement = {
       userId,
-      date,
+      date: parsedDate,
       statement,
       locationOfIncident,
       suspectDetails: {
@@ -54,16 +61,19 @@ export const addWitnessStatement = async (req, res) => {
         additionalFeatures,
         photo,
       },
+      createdAt: new Date(),
     };
 
     witness.statements.push(newStatement);
+
     await caseData.save();
-    return res.status(200).send({
+
+    return res.status(201).send({
       message: "Statement added successfully",
       newStatement,
     });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return res.status(500).send({
       message: "Error happened",
     });
