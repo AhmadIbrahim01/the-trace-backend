@@ -83,21 +83,28 @@ export const updateWitnessStatement = async (req, res) => {
     photo,
   } = req.body;
 
-  try {
-    if (
-      !userId ||
-      !date ||
-      !statement ||
-      !locationOfIncident ||
-      !approximatedAge ||
-      !additionalFeatures
-    ) {
-      return res.status(404).send({
-        message: "Missing data",
-      });
-    }
-    const caseData = await Case.findById(caseId);
+  if (
+    !userId ||
+    !date ||
+    !statement ||
+    !locationOfIncident ||
+    !approximatedAge ||
+    !additionalFeatures
+  ) {
+    return res.status(400).send({
+      message: "Missing required fields",
+    });
+  }
 
+  const parsedDate = new Date(date);
+  if (isNaN(parsedDate)) {
+    return res.status(400).send({
+      message: "Invalid date format",
+    });
+  }
+
+  try {
+    const caseData = await Case.findById(caseId);
     if (!caseData) {
       return res.status(404).send({
         message: "Case not found",
@@ -107,9 +114,8 @@ export const updateWitnessStatement = async (req, res) => {
     const witness = caseData.witnesses.find(
       (w) => w._id.toString() === witnessId
     );
-
     if (!witness) {
-      return res.status(404).json({
+      return res.status(404).send({
         message: "Witness not found",
       });
     }
@@ -117,18 +123,16 @@ export const updateWitnessStatement = async (req, res) => {
     const statementIndex = witness.statements.findIndex(
       (s) => s._id.toString() === statementId
     );
-
     if (statementIndex === -1) {
       return res.status(404).send({
         message: "Statement not found",
       });
     }
 
-    witness.statements[statementIndex] = {
+    const updatedStatement = {
       ...witness.statements[statementIndex],
-      _id: statementId,
       userId,
-      date,
+      date: parsedDate,
       statement,
       locationOfIncident,
       suspectDetails: {
@@ -140,18 +144,22 @@ export const updateWitnessStatement = async (req, res) => {
       updatedAt: new Date(),
     };
 
+    witness.statements[statementIndex] = updatedStatement;
+
     await caseData.save();
-    res.status(200).send({
+
+    return res.status(200).send({
       message: "Statement updated successfully",
-      case: caseData,
+      updatedStatement,
     });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return res.status(500).send({
-      message: "Error happened ",
+      message: "Error happened",
     });
   }
 };
+
 export const deleteWitnessStatement = async (req, res) => {
   const { caseId, witnessId, statementId } = req.params;
 
