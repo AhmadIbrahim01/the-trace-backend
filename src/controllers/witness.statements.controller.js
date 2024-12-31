@@ -232,3 +232,48 @@ export const deleteWitnessStatement = async (req, res) => {
     });
   }
 };
+
+export const getWitnessStatements = async (req, res) => {
+  const { caseId, witnessId } = req.params;
+
+  if (!caseId || !witnessId) {
+    return res.status(400).send({
+      message: "Missing required parameters",
+    });
+  }
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const witness = caseData.witnesses.find(
+      (witness) => witness._id.toString() === witnessId
+    );
+
+    if (!witness) {
+      return res.status(404).send({
+        message: "Witness not found",
+      });
+    }
+
+    if (witness.statements.length === 0) {
+      return res.status(404).send({
+        message: "No statements found for this witness",
+      });
+    }
+
+    return res.status(200).send({
+      message: "Witness statements retrieved successfully",
+      statements: witness.statements,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
