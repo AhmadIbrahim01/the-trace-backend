@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Case from "../models/case.model.js";
+import { User } from "../models/user.model.js";
 
 export const addSuspectStatement = async (req, res) => {
   const { caseId, suspectId } = req.params;
@@ -156,6 +157,56 @@ export const updateSuspectStatement = async (req, res) => {
     return res.status(200).send({
       message: "Statement updated successfully",
       updatedStatement,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
+
+export const getSuspectStatements = async (req, res) => {
+  const { caseId, suspectId } = req.params;
+  if (!caseId || !suspectId) {
+    return res.status(400).send({
+      message: "Missing case id or suspect id",
+    });
+  }
+
+  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
+    return res.status(400).send({
+      message: "Invalid case id format",
+    });
+  }
+  if (suspectId && !mongoose.Types.ObjectId.isValid(suspectId)) {
+    return res.status(400).send({
+      message: "Invalid suspect id format",
+    });
+  }
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(400).send({
+        message: "Case not found",
+      });
+    }
+
+    const suspectIndex = caseData.suspects.findIndex(
+      (s) => s._id.toString() === suspectId
+    );
+
+    if (suspectIndex === -1) {
+      return res.status(400).send({
+        message: "Suspect not found",
+      });
+    }
+    const statements = caseData.suspects[suspectIndex].statements;
+
+    return res.status(200).send({
+      message: "Suspect statements retrieved successfully",
+      statements,
     });
   } catch (error) {
     console.error(error.message);
