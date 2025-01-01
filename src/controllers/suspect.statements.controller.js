@@ -283,3 +283,58 @@ export const getSuspectStatement = async (req, res) => {
     });
   }
 };
+
+export const deleteSuspectStatements = async (req, res) => {
+  const { caseId, suspectId } = req.params;
+  if (!caseId || !suspectId) {
+    return res.status(400).send({
+      message: "Missing case id or suspect id",
+    });
+  }
+
+  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
+    return res.status(400).send({
+      message: "Invalid case id format",
+    });
+  }
+  if (suspectId && !mongoose.Types.ObjectId.isValid(suspectId)) {
+    return res.status(400).send({
+      message: "Invalid suspect id format",
+    });
+  }
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(400).send({
+        message: "Case not found",
+      });
+    }
+
+    const suspectIndex = caseData.suspects.findIndex(
+      (s) => s._id.toString() === suspectId
+    );
+
+    if (suspectIndex === -1) {
+      return res.status(400).send({
+        message: "Suspect not found",
+      });
+    }
+    if (caseData.suspects[suspectIndex].statements.length === 0) {
+      return res.status(400).send({
+        message: "Suspect has no statements",
+      });
+    }
+    caseData.suspects[suspectIndex].statements = [];
+    await caseData.save();
+    return res.status(200).send({
+      message: "Suspect statements deleted successfully",
+      caseData,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
