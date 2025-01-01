@@ -271,3 +271,25 @@ export const casesStats = async (req, res) => {
     });
   }
 };
+
+export const getPublicCases = async (req, res) => {
+  try {
+    const publicCases = await Case.find({ visibility: "public" });
+
+    if (!publicCases || publicCases.length === 0) {
+      return res.status(404).send({
+        message: "No public cases found",
+      });
+    }
+
+    return res.status(200).send({
+      message: "Public cases retrieved successfully",
+      publicCases,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
