@@ -3,6 +3,7 @@ import {
   addSuspectStatement,
   updateSuspectStatement,
   getSuspectStatements,
+  getSuspectStatement,
 } from "../controllers/suspect.statements.controller.js";
 
 const suspectStatementsRouter = new Router();
@@ -13,5 +14,9 @@ suspectStatementsRouter.put(
   updateSuspectStatement
 );
 suspectStatementsRouter.get("/:caseId/:suspectId?", getSuspectStatements);
+suspectStatementsRouter.get(
+  "/:caseId/:suspectId/:statementId?",
+  getSuspectStatement
+);
 
 export default suspectStatementsRouter;
