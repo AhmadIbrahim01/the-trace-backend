@@ -1,4 +1,5 @@
 import Case from "../models/case.model.js";
+
 import mongoose from "mongoose";
 
 export const addWitnessStatement = async (req, res) => {
@@ -19,7 +20,6 @@ export const addWitnessStatement = async (req, res) => {
     });
   }
   const {
-    userId,
     date,
     statement,
     locationOfIncident,
@@ -30,7 +30,6 @@ export const addWitnessStatement = async (req, res) => {
   } = req.body;
 
   if (
-    !userId ||
     !date ||
     !statement ||
     !locationOfIncident ||
@@ -39,12 +38,6 @@ export const addWitnessStatement = async (req, res) => {
   ) {
     return res.status(400).send({
       message: "Missing required fields",
-    });
-  }
-
-  if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).send({
-      message: "Invalid userId format.",
     });
   }
 
@@ -63,17 +56,16 @@ export const addWitnessStatement = async (req, res) => {
       });
     }
 
-    const witness = caseData.witnesses.find(
+    const witnessIndex = caseData.witnesses.findIndex(
       (w) => w._id.toString() === witnessId
     );
-    if (!witness) {
-      return res.status(404).send({
-        message: "Witness not found",
-      });
+    if (witnessIndex === -1) {
+      console.log("Witness not found");
     }
 
+    const witness = caseData.witnesses[witnessIndex];
+
     const newStatement = {
-      userId,
       date: parsedDate,
       statement,
       locationOfIncident,
@@ -86,7 +78,9 @@ export const addWitnessStatement = async (req, res) => {
       createdAt: new Date(),
     };
 
-    witness.statements.push(newStatement);
+    const statements = witness.statements;
+
+    statements.push(newStatement);
 
     await caseData.save();
 
@@ -105,7 +99,6 @@ export const addWitnessStatement = async (req, res) => {
 export const updateWitnessStatement = async (req, res) => {
   const { caseId, witnessId, statementId } = req.params;
   const {
-    userId,
     date,
     statement,
     locationOfIncident,
@@ -116,7 +109,6 @@ export const updateWitnessStatement = async (req, res) => {
   } = req.body;
 
   if (
-    !userId ||
     !date ||
     !statement ||
     !locationOfIncident ||
@@ -164,7 +156,6 @@ export const updateWitnessStatement = async (req, res) => {
     const updatedStatement = {
       ...witness.statements[statementIndex],
       _id: statementId,
-      userId,
       date: parsedDate,
       statement,
       locationOfIncident,
