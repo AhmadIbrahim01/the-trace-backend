@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import Case from "../models/case.model.js";
-import { User } from "../models/user.model.js";
 
 export const addSuspectStatement = async (req, res) => {
   const { caseId, suspectId } = req.params;
