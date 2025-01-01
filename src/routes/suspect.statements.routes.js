@@ -4,6 +4,7 @@ import {
   updateSuspectStatement,
   getSuspectStatements,
   getSuspectStatement,
+  deleteSuspectStatements,
 } from "../controllers/suspect.statements.controller.js";
 
 const suspectStatementsRouter = new Router();
@@ -18,5 +19,6 @@ suspectStatementsRouter.get(
   "/:caseId/:suspectId/:statementId?",
   getSuspectStatement
 );
+suspectStatementsRouter.delete("/:caseId/:suspectId?", deleteSuspectStatements);
 
 export default suspectStatementsRouter;
