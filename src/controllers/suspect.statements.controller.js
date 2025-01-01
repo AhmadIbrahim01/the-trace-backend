@@ -215,3 +215,71 @@ export const getSuspectStatements = async (req, res) => {
     });
   }
 };
+
+export const getSuspectStatement = async (req, res) => {
+  const { caseId, suspectId, statementId } = req.params;
+
+  if (!caseId || !suspectId || !statementId) {
+    return res.status(400).send({
+      message: "Missing case id, suspect id or statement id",
+    });
+  }
+
+  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
+    return res.status(400).send({
+      message: "Invalid case id format",
+    });
+  }
+  if (suspectId && !mongoose.Types.ObjectId.isValid(suspectId)) {
+    return res.status(400).send({
+      message: "Invalid suspect id format",
+    });
+  }
+  if (statementId && !mongoose.Types.ObjectId.isValid(statementId)) {
+    return res.status(400).send({
+      message: "Invalid statement id format",
+    });
+  }
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(400).send({
+        message: "Case not found",
+      });
+    }
+
+    const suspectIndex = caseData.suspects.findIndex(
+      (s) => s._id.toString() === suspectId
+    );
+
+    if (suspectIndex === -1) {
+      return res.status(400).send({
+        message: "Suspect not found",
+      });
+    }
+    const suspect = caseData.suspects[suspectIndex];
+
+    const statementIndex = suspect.statements.findIndex(
+      (s) => s._id.toString() === statementId
+    );
+
+    if (statementIndex === -1) {
+      return res.status(400).send({
+        message: "Statement not found",
+      });
+    }
+
+    const statement = suspect.statements[statementIndex];
+
+    return res.status(200).send({
+      message: "Suspect statement retrieved successfully",
+      statement,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
