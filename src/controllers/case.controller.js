@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Case from "../models/case.model.js";
+import { User } from "../models/user.model.js";
 
 export const createCase = async (req, res) => {
   const {
@@ -285,6 +287,55 @@ export const getPublicCases = async (req, res) => {
     return res.status(200).send({
       message: "Public cases retrieved successfully",
       publicCases,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
+
+export const getInvestigatorCases = async (req, res) => {
+  const investigatorId = req.params.investigatorId;
+  if (!investigatorId) {
+    return res.status(400).send({
+      message: "Missing investigator id",
+    });
+  }
+  if (investigatorId && !mongoose.Types.ObjectId.isValid(investigatorId)) {
+    return res.status(400).send({
+      message: "Investigator id is not valid format",
+    });
+  }
+
+  try {
+    const user = await User.findById(investigatorId);
+    if (!user) {
+      return res.status(400).send({
+        message: "User wasn't found",
+      });
+    }
+
+    if (user.role !== "investigator") {
+      return res.status(400).send({
+        message: "User is not an investigator",
+      });
+    }
+
+    const cases = await Case.find({
+      "assignedInvestigator.investigatorId": investigatorId,
+    });
+
+    if (!cases || cases.length === 0) {
+      return res.status(400).send({
+        message: "Investigator has no cases",
+      });
+    }
+
+    return res.status(200).send({
+      message: "Investigator's cases retrieved sucessfully",
+      cases,
     });
   } catch (error) {
     console.error(error.message);
