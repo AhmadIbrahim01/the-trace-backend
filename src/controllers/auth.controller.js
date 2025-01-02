@@ -13,17 +13,15 @@ export const register = async (req, res) => {
 
     const loweredEmail = email.toLowerCase();
 
-    const userEmail = await User.findOne({ loweredEmail });
-    if (userEmail) {
+    const userExists = await User.findOne({
+      $or: [{ email: loweredEmail }, { phone }],
+    });
+    if (userExists) {
       return res.status(409).send({
-        message: "Email already registered",
-      });
-    }
-
-    const userPhone = await User.findOne({ phone });
-    if (userPhone) {
-      return res.status(409).send({
-        message: "Phone already registered",
+        message:
+          userExists.email === loweredEmail
+            ? "Email already registered"
+            : "Phone already registered",
       });
     }
 
@@ -63,7 +61,7 @@ export const login = async (req, res) => {
     const check = await bcrypt.compare(password, user.password);
 
     if (!check) {
-      return res.status(404).send({
+      return res.status(401).send({
         message: "Invalid credentials",
       });
     }
@@ -75,7 +73,7 @@ export const login = async (req, res) => {
     );
 
     return res.status(200).send({
-      user,
+      user: { email: user.email, firstName: user.firstName },
       token,
       message: "Login successfully",
     });
