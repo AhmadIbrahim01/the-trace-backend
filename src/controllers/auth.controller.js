@@ -67,10 +67,11 @@ export const login = async (req, res) => {
         message: "Invalid credentials",
       });
     }
-
+    const expirationTime = "1h";
     const token = await jwt.sign(
       { email: user.email, name: user.firstName },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: expirationTime }
     );
 
     return res.status(200).send({
