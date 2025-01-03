@@ -65,9 +65,11 @@ export const login = async (req, res) => {
         message: "Invalid credentials",
       });
     }
+    const userId = user._id.toString();
+
     const expirationTime = "1h";
     const token = await jwt.sign(
-      { email: user.email, name: user.firstName },
+      { email: user.email, name: user.firstName, userId },
       process.env.JWT_SECRET,
       { expiresIn: expirationTime }
     );
@@ -80,6 +82,26 @@ export const login = async (req, res) => {
   } catch (error) {
     console.log(error.message);
 
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
+
+export const getUser = async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).send({
+        message: "User not found",
+      });
+    }
+    return res.status(200).send({
+      user,
+    });
+  } catch (error) {
+    console.log(error.message);
     return res.status(500).send({
       message: "Error happened",
     });
