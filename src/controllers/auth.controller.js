@@ -107,3 +107,75 @@ export const getUser = async (req, res) => {
     });
   }
 };
+
+export const updateUser = async (req, res) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).send({
+      message: "Missing user id",
+    });
+  }
+
+  const { firstName, lastName, email, phone, profilePicture } = req.body;
+  if (!firstName || !lastName || !email || !phone) {
+    return res.status(400).send({
+      message: "Missing credentials",
+    });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).send({
+        message: "User not found",
+      });
+    }
+
+    if (email && email.toLowerCase() !== user.email.toLowerCase()) {
+      const loweredEmail = email.toLowerCase();
+      const userEmail = await User.findOne({ email: loweredEmail });
+      if (userEmail) {
+        return res.status(409).send({
+          message: "Email already registered",
+        });
+      }
+    }
+
+    if (phone && phone !== user.phone) {
+      const userPhone = await User.findOne({ phone });
+      if (userPhone) {
+        return res.status(409).send({
+          message: "Phone already registered",
+        });
+      }
+    }
+
+    const updated = await User.findByIdAndUpdate(
+      userId,
+      {
+        firstName,
+        lastName,
+        email: email ? email.toLowerCase() : user.email,
+        phone: phone || user.phone,
+        profilePicture: profilePicture || user.profilePicture,
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).send({
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).send({
+      message: "User updated successfully",
+      updated,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
