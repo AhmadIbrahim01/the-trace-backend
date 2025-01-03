@@ -34,6 +34,14 @@ const userSchema = new Schema(
       default: "",
     },
     banned: { type: Boolean, default: "false" },
+    tipsStats: {
+      videos: { type: Number, default: 0 },
+      photos: { type: Number, default: 0 },
+      documents: { type: Number, default: 0 },
+      accepted: { type: Number, default: 0 },
+    },
+    level: { type: Number, default: 1 },
+    badges: [{ type: String }],
   },
   { timestamps: true }
 );
