@@ -36,7 +36,7 @@ export const addTestimonial = async (req, res) => {
 };
 
 export const getTestimonials = async (req, res) => {
-  const testimonials = await Testimonial.find({}).limit(2);
+  const testimonials = await Testimonial.find({}).limit(3);
 
   if (testimonials == "") {
     return res.status(500).send({
