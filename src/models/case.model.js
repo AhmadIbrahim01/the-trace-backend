@@ -129,7 +129,10 @@ export const caseSchema = new Schema(
         createdAt: { type: Date, default: Date.now },
       },
     ],
-    map: { type: String },
+    map: {
+      latitude: { type: Number },
+      longitude: { type: Number },
+    },
     scene: { type: String },
     caseImages: [{ type: String }],
   },

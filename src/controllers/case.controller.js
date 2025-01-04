@@ -12,6 +12,7 @@ export const createCase = async (req, res) => {
     visibility,
     tags,
     evidence,
+    map,
   } = req.body;
 
   try {
@@ -30,6 +31,7 @@ export const createCase = async (req, res) => {
       visibility,
       tags,
       evidence,
+      map,
     });
 
     return res.status(201).send({
@@ -103,6 +105,7 @@ export const updateCase = async (req, res) => {
       caseImages,
       visibility,
       tags,
+      map,
     } = req.body;
 
     const updated = await Case.findByIdAndUpdate(
@@ -115,6 +118,7 @@ export const updateCase = async (req, res) => {
         caseImages,
         visibility,
         tags,
+        map,
       },
       { new: true }
     );
