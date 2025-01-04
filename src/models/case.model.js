@@ -131,7 +131,7 @@ export const caseSchema = new Schema(
     ],
     map: { type: String },
     scene: { type: String },
-    caseImages: { type: String },
+    caseImages: [{ type: String }],
   },
   { timestamps: true }
 );

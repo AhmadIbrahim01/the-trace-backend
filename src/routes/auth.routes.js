@@ -14,6 +14,6 @@ authRouter.post("/login", login);
 authRouter.post("/register", register);
 authRouter.get("/:userId?", getUser);
 authRouter.put("/:userId?", updateUser);
-authRouter.post("/profilepicture/:userId?", updateProfileImage);
+authRouter.put("/profilepicture/:userId?", updateProfileImage);
 
 export default authRouter;
