@@ -4,6 +4,7 @@ import {
   login,
   getUser,
   updateUser,
+  updateProfileImage,
 } from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
@@ -13,5 +14,6 @@ authRouter.post("/login", login);
 authRouter.post("/register", register);
 authRouter.get("/:userId?", getUser);
 authRouter.put("/:userId?", updateUser);
+authRouter.post("/profilepicture/:userId?", updateProfileImage);
 
 export default authRouter;
