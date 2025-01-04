@@ -91,7 +91,10 @@ export const getComments = async (req, res) => {
   const caseId = req.params.caseId;
 
   try {
-    const caseData = await Case.findById(caseId);
+    const caseData = await Case.findById(caseId).populate(
+      "comments.userId",
+      "firstName lastName profilePicture"
+    );
     if (!caseData) {
       return res.status(404).send({
         message: "Case not found",
@@ -105,6 +108,12 @@ export const getComments = async (req, res) => {
         message: "No comments",
       });
     }
+
+    // Populate comment
+    // const caseData = await Case.findById(caseId).populate(
+    //   "comments.userId",
+    //   "firstName lastName profilePicture"
+    // );
 
     return res.status(200).send({
       comments,
