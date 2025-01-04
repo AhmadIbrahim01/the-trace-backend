@@ -179,3 +179,51 @@ export const updateUser = async (req, res) => {
     });
   }
 };
+
+export const updateProfileImage = async (req, res) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).send({
+      message: "Missing user id",
+    });
+  }
+  const profilePicture = req.body.profilePicture;
+  if (!profilePicture) {
+    return res.status(400).send({
+      message: "Missing profile picture",
+    });
+  }
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).send({
+        message: "User not found",
+      });
+    }
+
+    const updatedProfile = await User.findByIdAndUpdate(
+      userId,
+      {
+        profilePicture,
+      },
+      { new: true }
+    );
+
+    if (!updatedProfile) {
+      return res.status(400).send({
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).send({
+      message: "User updated successfully",
+      updatedProfile,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
