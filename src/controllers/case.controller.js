@@ -11,6 +11,7 @@ export const createCase = async (req, res) => {
     caseImages,
     visibility,
     tags,
+    evidence,
   } = req.body;
 
   try {
@@ -28,6 +29,7 @@ export const createCase = async (req, res) => {
       caseImages,
       visibility,
       tags,
+      evidence,
     });
 
     return res.status(201).send({
