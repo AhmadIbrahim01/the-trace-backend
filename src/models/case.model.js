@@ -49,11 +49,12 @@ export const caseSchema = new Schema(
         address: { type: String },
         crimeInvolved: { type: String, required: true },
         occupation: { type: String },
+        blood: { type: String },
         height: { type: Number },
         weight: { type: Number },
         eyeColor: { type: String },
         hairColor: { type: String },
-        photo: { type: String },
+        photos: [{ type: String }],
         statements: [
           {
             date: { type: Date, required: true },

@@ -13,7 +13,8 @@ export const addSuspect = async (req, res) => {
     weight,
     eyeColor,
     hairColor,
-    photo,
+    photos,
+    blood,
   } = req.body;
   const caseId = req.params.caseId;
   try {
@@ -23,7 +24,7 @@ export const addSuspect = async (req, res) => {
       });
     }
 
-    if (!name || !phone || !age || !crimeInvolved) {
+    if (!name || !phone || !age) {
       return res.status(400).send({
         message: "Incomplete data",
       });
@@ -47,7 +48,8 @@ export const addSuspect = async (req, res) => {
       weight,
       eyeColor,
       hairColor,
-      photo,
+      photos,
+      blood,
       createdAt: new Date(),
     };
 
@@ -81,6 +83,7 @@ export const updateSuspect = async (req, res) => {
     eyeColor,
     hairColor,
     photo,
+    blood,
   } = req.body;
 
   try {
@@ -129,6 +132,7 @@ export const updateSuspect = async (req, res) => {
       eyeColor,
       hairColor,
       photo,
+      blood,
       updatedAt: new Date(),
     };
     await caseData.save();
