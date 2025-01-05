@@ -69,13 +69,13 @@ export const login = async (req, res) => {
 
     const expirationTime = "1h";
     const token = await jwt.sign(
-      { email: user.email, name: user.firstName, userId },
+      { email: user.email, name: user.firstName, userId, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: expirationTime }
     );
 
     return res.status(200).send({
-      user: { email: user.email, firstName: user.firstName },
+      user: { email: user.email, firstName: user.firstName, role: user.role },
       token,
       message: "Login successfully",
     });
