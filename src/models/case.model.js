@@ -78,6 +78,8 @@ export const caseSchema = new Schema(
         age: { type: Number, required: true },
         gender: { type: String },
         address: { type: String },
+        photo: { type: String },
+
         statements: [
           {
             date: { type: Date, required: true },

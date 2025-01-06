@@ -3,7 +3,7 @@ import Case from "../models/case.model.js";
 export const addWitness = async (req, res) => {
   const caseId = req.params.id;
 
-  const { name, phone, age, gender, address } = req.body;
+  const { name, phone, age, gender, address, photo } = req.body;
 
   try {
     if (!caseId) {
@@ -23,6 +23,7 @@ export const addWitness = async (req, res) => {
       age,
       gender,
       address,
+      photo,
       createdAt: new Date(),
     };
 
@@ -38,6 +39,7 @@ export const addWitness = async (req, res) => {
       age,
       gender,
       address,
+      photo,
     });
   } catch (error) {
     console.log(error.message);
@@ -50,7 +52,7 @@ export const addWitness = async (req, res) => {
 export const updateWitness = async (req, res) => {
   try {
     const { caseId, witnessId } = req.params;
-    const { name, phone, age, gender, address } = req.body;
+    const { name, phone, age, gender, address, photo } = req.body;
     if (!name || !phone || !age || !gender || !address) {
       return res.status(400).send({
         message: "All fields are required to update the witness",
@@ -80,6 +82,7 @@ export const updateWitness = async (req, res) => {
       age,
       gender,
       address,
+      photo,
       updatedAt: new Date(),
     };
 
