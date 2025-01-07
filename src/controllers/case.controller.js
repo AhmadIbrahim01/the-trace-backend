@@ -6,7 +6,7 @@ export const createCase = async (req, res) => {
   const {
     title,
     description,
-    assignedInvestigator,
+    investigatorId,
     status,
     caseImages,
     visibility,
@@ -16,7 +16,7 @@ export const createCase = async (req, res) => {
   } = req.body;
 
   try {
-    if (!title || !description || !assignedInvestigator || !caseImages) {
+    if (!title || !description || !investigatorId) {
       return res.status(500).send({
         message: "Incompete data",
       });
@@ -25,7 +25,7 @@ export const createCase = async (req, res) => {
     const newCase = await Case.create({
       title,
       description,
-      assignedInvestigator,
+      investigatorId,
       status,
       caseImages,
       visibility,
@@ -100,7 +100,7 @@ export const updateCase = async (req, res) => {
     const {
       title,
       description,
-      assignedInvestigator,
+      investigatorId,
       status,
       caseImages,
       visibility,
@@ -113,7 +113,7 @@ export const updateCase = async (req, res) => {
       {
         title,
         description,
-        assignedInvestigator,
+        investigatorId,
         status,
         caseImages,
         visibility,
@@ -330,7 +330,7 @@ export const getInvestigatorCases = async (req, res) => {
     }
 
     const cases = await Case.find({
-      "assignedInvestigator.investigatorId": investigatorId,
+      investigatorId,
     });
 
     if (!cases || cases.length === 0) {

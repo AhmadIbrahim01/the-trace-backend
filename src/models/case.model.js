@@ -31,14 +31,14 @@ export const caseSchema = new Schema(
 
     tags: [{ type: String }],
 
-    assignedInvestigator: {
-      investigatorId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-      },
-      name: { type: String },
+    investigatorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
+    // assignedInvestigator: {
+    //   name: { type: String },
+    // },
 
     suspects: [
       {
@@ -133,8 +133,8 @@ export const caseSchema = new Schema(
       },
     ],
     map: {
-      latitude: { type: Number },
-      longitude: { type: Number },
+      latitude: { type: String },
+      longitude: { type: String },
     },
     scene: { type: String },
     caseImages: [{ type: String }],
