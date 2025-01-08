@@ -110,12 +110,12 @@ export const generateSketch = async (req, res) => {
       size: "256x256",
     });
 
-    caseData.suspectSketches[sketchIndex] = image.data;
+    caseData.suspectSketches[sketchIndex] = image.data[0].url;
     await caseData.save();
 
     return res.status(201).send({
       message: "API request successful",
-      url: image.data,
+      url: image.data[0].url,
     });
   } catch (error) {
     console.log(error.message);
