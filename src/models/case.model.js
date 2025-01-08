@@ -138,6 +138,15 @@ export const caseSchema = new Schema(
     },
     scene: { type: String },
     caseImages: [{ type: String }],
+    suspectSketches: [
+      {
+        name: { type: String, required: true },
+        age: { type: String, required: true },
+        description: { type: String, required: true },
+        additional: { type: String },
+        photo: { type: String },
+      },
+    ],
   },
   { timestamps: true }
 );
