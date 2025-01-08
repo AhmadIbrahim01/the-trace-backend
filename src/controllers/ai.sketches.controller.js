@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
-
 import Case from "../models/case.model.js";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
 
 export const addSketch = async (req, res) => {
   const caseId = req.params.caseId;
