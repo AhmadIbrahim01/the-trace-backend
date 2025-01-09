@@ -1,12 +1,8 @@
 import { Router } from "express";
-import {
-  addSketch,
-  generateSketch,
-} from "../controllers/ai.sketches.controller.js";
+import { generateTextSketch } from "../controllers/ai.sketches.controller.js";
 
 const sketchRouter = new Router();
 
-sketchRouter.post("/:caseId?", addSketch);
-sketchRouter.post("/:caseId/:sketchId?", generateSketch);
+sketchRouter.post("/:caseId?", generateTextSketch);
 
 export default sketchRouter;

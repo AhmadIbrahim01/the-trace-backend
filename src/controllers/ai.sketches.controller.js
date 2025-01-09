@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { model } from "mongoose";
 import Case from "../models/case.model.js";
 import OpenAI from "openai";
 
@@ -7,7 +7,7 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-export const addSketch = async (req, res) => {
+export const generateTextSketch = async (req, res) => {
   const caseId = req.params.caseId;
 
   if (!caseId) {
@@ -21,6 +21,7 @@ export const addSketch = async (req, res) => {
       message: "Case id is not valid format",
     });
   }
+
   const { name, age, description, additional } = req.body;
   if (!name || !age || !description) {
     return res.status(404).send({
@@ -36,73 +37,9 @@ export const addSketch = async (req, res) => {
       });
     }
 
-    const sketch = {
-      name,
-      age,
-      description,
-      additional,
-    };
-    caseData.suspectSketches.push(sketch);
-
-    await caseData.save();
-
-    return res.status(201).send({
-      message: "Sketch data was added successfully",
-      sketch,
-    });
-  } catch (error) {
-    console.log(error.message);
-    return res.status(500).send({
-      message: "Error happened",
-    });
-  }
-};
-
-export const generateSketch = async (req, res) => {
-  const { caseId, sketchId } = req.params;
-  if (!caseId) {
-    return res.status(404).send({
-      message: "Case Id is not found",
-    });
-  }
-  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
-    return res.status(500).send({
-      message: "Case Id is not in a valid format",
-    });
-  }
-  if (!sketchId) {
-    return res.status(404).send({
-      message: "Sketch Id is not found",
-    });
-  }
-  if (sketchId && !mongoose.Types.ObjectId.isValid(sketchId)) {
-    return res.status(500).send({
-      message: "Sketch Id is not in a valid format",
-    });
-  }
-  const { prompt } = req.body;
-  if (!prompt) {
-    return res.status(404).send({
-      message: "Prompt is missing",
-    });
-  }
-
-  try {
-    const caseData = await Case.findById(caseId);
-    if (!caseData) {
-      return res.status(404).send({
-        message: "Case has not been found",
-      });
-    }
-
-    const sketchIndex = caseData.suspectSketches.findIndex(
-      (sketch) => sketch._id.toString() === sketchId
-    );
-    if (sketchIndex === -1) {
-      return res.status(404).send({
-        message: "Sketch not found",
-      });
-    }
+    const prompt = `Create an image of a suspect named ${name}. The suspect has ${description} He is approximately in the age range ${age}. ${
+      additional ? "The suspect has " + additional + "." : ""
+    } Ensure that the face is centered in the image, with the suspect's head and shoulders visible in the foreground. The lighting should be clear, with a neutral background that doesn't distract from the suspect's face.`;
 
     const image = await openai.images.generate({
       model: "dall-e-2",
@@ -110,12 +47,17 @@ export const generateSketch = async (req, res) => {
       size: "256x256",
     });
 
-    caseData.suspectSketches[sketchIndex] = image.data[0].url;
-    await caseData.save();
-
+    const inputs = {
+      name,
+      age,
+      description,
+      additional,
+    };
     return res.status(201).send({
-      message: "API request successful",
-      url: image.data[0].url,
+      message: "Sketch was generated succesfully",
+      image: image.data[0].url,
+      inputs,
+      prompt,
     });
   } catch (error) {
     console.log(error.message);

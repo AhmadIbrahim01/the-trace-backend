@@ -145,6 +145,7 @@ export const caseSchema = new Schema(
         description: { type: String, required: true },
         additional: { type: String },
         photo: { type: String },
+        prompt: { type: String },
       },
     ],
   },
