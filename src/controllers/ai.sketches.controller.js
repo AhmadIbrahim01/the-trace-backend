@@ -66,3 +66,54 @@ export const generateTextSketch = async (req, res) => {
     });
   }
 };
+
+export const saveSketch = async (req, res) => {
+  const caseId = req.params.caseId;
+  if (!caseId) {
+    return res.status(404).send({
+      message: "Case Id is missing",
+    });
+  }
+  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
+    return res.status(404).send({
+      message: "Case Id is of invalid format",
+    });
+  }
+
+  const { name, age, description, additional, image, prompt } = req.body;
+
+  if (!name || !age || !description || !image || !prompt) {
+    return res.status(400).send({
+      message: "Incomplete data",
+    });
+  }
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case is not found",
+      });
+    }
+    const sketch = {
+      name,
+      age,
+      description,
+      additional,
+      image,
+      prompt,
+    };
+    caseData.suspectSketches.push(sketch);
+    caseData.save();
+
+    return res.status(201).send({
+      message: "Sketch has been added successfully",
+      sketch,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
