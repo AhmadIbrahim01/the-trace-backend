@@ -13,7 +13,8 @@ import tipRouter from "./routes/tip.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import witnessStatementsRouter from "./routes/witness.statements.routes.js";
 import suspectStatementsRouter from "./routes/suspect.statements.routes.js";
-import sketchRouter from "./routes/ai.sketch.routes.js";
+import investigatorRouter from "./routes/investigator.routes.js";
+// import sketchRouter from "./routes/ai.sketch.routes.js";
 
 const app = express();
 
@@ -26,6 +27,13 @@ app.use(
   })
 );
 
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173", // Allow only this domain
+//     methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific methods
+//   })
+// );
+
 app.use("/api/auth", authRouter);
 app.use("/api/testimonial", testimonialRouter);
 app.use("/api/case", caseRouter);
@@ -37,7 +45,8 @@ app.use("/api/tip", tipRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/witness/statements", witnessStatementsRouter);
 app.use("/api/suspect/statements", suspectStatementsRouter);
-app.use("/api/sketches", sketchRouter);
+app.use("/api/investigator", investigatorRouter);
+// app.use("/api/sketches", sketchRouter);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running on port ${process.env.SERVER_PORT}`);
