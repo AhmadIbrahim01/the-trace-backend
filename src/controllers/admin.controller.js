@@ -195,6 +195,26 @@ export const getInvestigators = async (req, res) => {
     });
   }
 };
+export const getAdmins = async (req, res) => {
+  try {
+    const admins = await User.find({ role: "admin" });
+    if (admins.length === 0) {
+      return res.status(200).send({
+        message: "No admins were found",
+      });
+    }
+    const totalAdminsNumber = admins.length;
+    return res.status(200).send({
+      admins,
+      totalAdminsNumber,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
 
 export const toggleInvestigator = async (req, res) => {
   const userId = req.params.userId;
