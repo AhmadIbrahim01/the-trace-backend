@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import Case from "../models/case.model.js";
 import bcrypt from "bcrypt";
 
 export const updateUser = async (req, res) => {
@@ -208,6 +209,27 @@ export const toggleInvestigator = async (req, res) => {
     await user.save();
     return res.status(200).send({
       user,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
+
+export const getStats = async (req, res) => {
+  try {
+    const activeCases = await Case.countDocuments({ status: "open" });
+    const resolvedCases = await Case.countDocuments({ status: "solved" });
+    const totalInvestigators = await User.countDocuments({
+      role: "investigator",
+    });
+
+    return res.status(200).send({
+      activeCases,
+      resolvedCases,
+      totalInvestigators,
     });
   } catch (error) {
     console.log(error.message);
