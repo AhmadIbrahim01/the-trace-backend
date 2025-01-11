@@ -7,10 +7,12 @@ import {
   getUser,
   getInvestigators,
   toggleInvestigator,
+  getStats,
 } from "../controllers/admin.controller.js";
 
 const adminRouter = new Router();
 
+adminRouter.get("/stats", getStats);
 adminRouter.get("/investigators", getInvestigators);
 adminRouter.get("/", getUsers);
 adminRouter.get("/:userId?", getUser);
