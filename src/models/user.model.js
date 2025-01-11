@@ -26,7 +26,7 @@ const userSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["public_user", "investigator", "admin"],
+      enum: ["public_user", "investigator", "admin", "super_admin"],
       default: "public_user",
     },
     profilePicture: {
