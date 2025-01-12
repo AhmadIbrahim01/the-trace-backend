@@ -215,6 +215,45 @@ export const getAdmins = async (req, res) => {
     });
   }
 };
+export const getAdmin = async (req, res) => {
+  const adminId = req.params.adminId;
+  if (!adminId) {
+    return res.status(400).send({
+      message: "Admin Id is missing",
+    });
+  }
+  try {
+    const admins = await User.find({
+      role: { $in: ["admin", "super_admin"] },
+    }).select("-password");
+    if (admins.length === 0) {
+      return res.status(200).send({
+        message: "No admins were found",
+      });
+    }
+
+    const adminIndex = await admins.findIndex(
+      (admin) => admin._id.toString() === adminId
+    );
+
+    if (adminIndex === -1) {
+      return res.status(400).send({
+        message: "Admin not found",
+      });
+    }
+
+    const admin = admins[adminIndex];
+
+    return res.status(200).send({
+      admin,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
 
 export const toggleInvestigator = async (req, res) => {
   const userId = req.params.userId;
