@@ -6,7 +6,7 @@ import {
 
 const sketchRouter = new Router();
 
-sketchRouter.post("/:caseId?", generateTextSketch);
 sketchRouter.post("/save/:caseId?", saveSketch);
+sketchRouter.post("/:caseId?", generateTextSketch);
 
 export default sketchRouter;
