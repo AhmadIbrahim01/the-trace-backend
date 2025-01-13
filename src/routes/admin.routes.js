@@ -9,6 +9,7 @@ import {
   toggleInvestigator,
   getStats,
   getAdmins,
+  getAdmin,
 } from "../controllers/admin.controller.js";
 
 const adminRouter = new Router();
@@ -16,6 +17,7 @@ const adminRouter = new Router();
 adminRouter.get("/stats", getStats);
 adminRouter.get("/investigators", getInvestigators);
 adminRouter.get("/admins", getAdmins);
+adminRouter.get("/admins/:adminId?", getAdmin);
 adminRouter.get("/", getUsers);
 adminRouter.get("/:userId?", getUser);
 adminRouter.put("/:userId?", updateUser);
