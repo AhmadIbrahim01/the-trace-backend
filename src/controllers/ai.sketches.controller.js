@@ -1,6 +1,9 @@
 import mongoose, { model } from "mongoose";
 import Case from "../models/case.model.js";
+import dotenv from "dotenv";
+
 import OpenAI from "openai";
+dotenv.config();
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -41,12 +44,17 @@ export const generateTextSketch = async (req, res) => {
       additional ? "The suspect has " + additional + "." : ""
     } Ensure that the face is centered in the image, with the suspect's head and shoulders visible in the foreground. The lighting should be clear, with a neutral background that doesn't distract from the suspect's face.`;
 
-    const image = await openai.images.generate({
+    const imageResponse = await openai.images.generate({
       model: "dall-e-2",
       prompt,
       size: "256x256",
     });
 
+    if (!imageResponse.data || !imageResponse.data[0]?.url) {
+      return res.status(500).send({
+        message: "Failed to generate image",
+      });
+    }
     const inputs = {
       name,
       age,
@@ -55,14 +63,14 @@ export const generateTextSketch = async (req, res) => {
     };
     return res.status(201).send({
       message: "Sketch was generated succesfully",
-      image: image.data[0].url,
+      image: imageResponse.data[0].url,
       inputs,
       prompt,
     });
   } catch (error) {
-    console.log(error.message);
+    console.error("Error generating sketch:", error);
     return res.status(500).send({
-      message: "Error happened",
+      message: "An error occurred while generating the sketch.",
     });
   }
 };
