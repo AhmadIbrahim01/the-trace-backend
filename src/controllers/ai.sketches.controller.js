@@ -75,6 +75,61 @@ export const generateTextSketch = async (req, res) => {
   }
 };
 
+export const generateImageSketch = async (req, res) => {
+  const caseId = req.params.caseId;
+  if (!caseId) {
+    return res.status(400).send({
+      message: "Case ID is missing",
+    });
+  }
+
+  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
+    return res.status(404).send({
+      message: "Case ID is of invalid format",
+    });
+  }
+
+  const { image } = req.body;
+  if (!image) {
+    return res.status(400).send({
+      message: "Image is missing",
+    });
+  }
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const prompt = "Transform this into a photorealistic image of a person";
+
+    const response = await openai.images.edit({
+      model: "dall-e-2",
+      image,
+      prompt,
+      n: 1,
+      size: "256x256",
+    });
+
+    if (!response.data || !response.data[0]?.url) {
+      return res.status(500).send({
+        message: "Failed to generate image",
+      });
+    }
+
+    const editedImageUrl = response.data[0].url;
+    console.log("Edited Image URL:", editedImageUrl);
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened",
+    });
+  }
+};
+
 export const saveSketch = async (req, res) => {
   const caseId = req.params.caseId;
   if (!caseId) {
