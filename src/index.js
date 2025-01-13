@@ -16,6 +16,7 @@ import suspectStatementsRouter from "./routes/suspect.statements.routes.js";
 import investigatorRouter from "./routes/investigator.routes.js";
 // import superAdminRouter from "./routes/super.admin.routes.js";
 import sketchRouter from "./routes/ai.sketch.routes.js";
+import aiStatementRouter from "./routes/ai.statement.routes.js";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use(
 // );
 
 app.use("/api/sketches", sketchRouter);
+app.use("/api/ai/statement", aiStatementRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/testimonial", testimonialRouter);
 app.use("/api/case", caseRouter);
