@@ -5,10 +5,12 @@ import {
   deleteChat,
   getChat,
   getChats,
+  sendMessage,
 } from "../controllers/investigator.gpt.controller.js";
 
 const investigatorGptRouter = new Router();
 
+investigatorGptRouter.post("/message/:userId/:chatId?", sendMessage);
 investigatorGptRouter.post("/:userId?", addChat);
 investigatorGptRouter.put("/:userId/:chatId?", updateChatName);
 investigatorGptRouter.delete("/:userId/:chatId?", deleteChat);

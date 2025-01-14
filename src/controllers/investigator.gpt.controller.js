@@ -244,4 +244,74 @@ export const getChats = async (req, res) => {
   }
 };
 
-export const sendMessage = (req, res) => {};
+export const sendMessage = async (req, res) => {
+  const { userId, chatId } = req.params;
+  if (!userId) {
+    return res.status(400).send({
+      message: "User ID is missing",
+    });
+  }
+  if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({
+      message: "User ID is of invalid format",
+    });
+  }
+  if (!chatId) {
+    return res.status(400).send({
+      message: "Chat ID is missing",
+    });
+  }
+  if (chatId && !mongoose.Types.ObjectId.isValid(chatId)) {
+    return res.status(400).send({
+      message: "Chat ID is of invalid format",
+    });
+  }
+
+  const { role, content } = req.body;
+  if (!role || !content) {
+    return res.status(400).send({
+      message: "Missing data",
+    });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).send({
+        messsage: "User not found",
+      });
+    }
+
+    const chats = user.chats;
+
+    const chatIndex = chats.findIndex((chat) => chat._id.toString() === chatId);
+
+    if (chatIndex === -1) {
+      return res.status(400).send({
+        message: "Chat not found",
+      });
+    }
+
+    const chat = chats[chatIndex];
+
+    const newMessage = {
+      role,
+      content,
+    };
+
+    const messages = chat.messages;
+
+    messages.push(newMessage);
+    await user.save();
+
+    return res.status(201).send({
+      message: "Message added successfully",
+      newMessage,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
