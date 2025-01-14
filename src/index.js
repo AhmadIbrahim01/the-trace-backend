@@ -18,6 +18,8 @@ import investigatorRouter from "./routes/investigator.routes.js";
 import sketchRouter from "./routes/ai.sketch.routes.js";
 import aiStatementRouter from "./routes/ai.statement.routes.js";
 
+import investigatorGptRouter from "./routes/investigator.gpt.routes.js";
+
 const app = express();
 
 dotenv.config();
@@ -36,6 +38,7 @@ app.use(
 //   })
 // );
 
+app.use("/api/gpt", investigatorGptRouter);
 app.use("/api/sketches", sketchRouter);
 app.use("/api/ai/statement", aiStatementRouter);
 app.use("/api/auth", authRouter);
