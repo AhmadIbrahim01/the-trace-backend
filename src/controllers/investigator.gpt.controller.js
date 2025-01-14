@@ -204,6 +204,44 @@ export const getChat = async (req, res) => {
   }
 };
 
-export const getChats = (req, res) => {};
+export const getChats = async (req, res) => {
+  const { userId } = req.params;
+  if (!userId) {
+    return res.status(400).send({
+      message: "User ID is missing",
+    });
+  }
+  if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).send({
+      message: "User ID is of invalid format",
+    });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send({
+        message: "Usere not found",
+      });
+    }
+
+    const chats = user.chats;
+    if (chats.length === 0) {
+      return res.status(404).send({
+        message: "No chats were found",
+      });
+    }
+
+    return res.status(200).send({
+      message: "Chats retreived successfully",
+      chats,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
+    });
+  }
+};
 
 export const sendMessage = (req, res) => {};
