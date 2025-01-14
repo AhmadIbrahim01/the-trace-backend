@@ -1,6 +1,13 @@
 import mongoose from "mongoose";
 import { User } from "../models/user.model.js";
 
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_AI_KEY,
+  dangerouslyAllowBrowser: true,
+});
+
 export const addChat = async (req, res) => {
   const userId = req.params.userId;
   if (!userId) {
@@ -226,11 +233,6 @@ export const getChats = async (req, res) => {
     }
 
     const chats = user.chats;
-    if (chats.length === 0) {
-      return res.status(404).send({
-        message: "No chats were found",
-      });
-    }
 
     return res.status(200).send({
       message: "Chats retreived successfully",
@@ -268,6 +270,7 @@ export const sendMessage = async (req, res) => {
   }
 
   const { role, content } = req.body;
+
   if (!role || !content) {
     return res.status(400).send({
       message: "Missing data",
@@ -299,14 +302,43 @@ export const sendMessage = async (req, res) => {
       content,
     };
 
-    const messages = chat.messages;
-
+    let messages = chat.messages;
     messages.push(newMessage);
+
+    if (messages.length > 5) {
+      messages = messages.slice(messages.length - 5);
+    }
+
+    const lastMessages = messages.map((msg) => ({
+      role: msg.role === "user" ? "user" : "assistant",
+      content: msg.content,
+    }));
+
+    const aiMessages = [
+      {
+        role: "system",
+        content: `when I send you hi you should say hi mr`,
+      },
+      ...lastMessages,
+    ];
+
+    // console.log("ai messages ", aiMessages);
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: aiMessages,
+    });
+
+    // console.log("res", response);
+    // console.log("res.chat", response.choices[0].message);
+
+    chat.messages.push(response.choices[0].message);
     await user.save();
 
     return res.status(201).send({
       message: "Message added successfully",
       newMessage,
+      aiResponse: response.choices[0].message,
     });
   } catch (error) {
     console.log(error.message);
