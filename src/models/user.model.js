@@ -1,5 +1,43 @@
 import { Schema, model } from "mongoose";
 
+const chatMessageSchema = new Schema(
+  {
+    role: {
+      type: String,
+      enum: ["user", "bot"],
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+    timestamp: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false }
+);
+
+const chatSchema = new Schema(
+  {
+    title: {
+      type: String,
+      default: "New Chat",
+    },
+    messages: [chatMessageSchema],
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: true }
+);
+
 const userSchema = new Schema(
   {
     firstName: {
@@ -42,6 +80,7 @@ const userSchema = new Schema(
     },
     level: { type: Number, default: 1 },
     badges: [{ type: String }],
+    chats: [chatSchema], // Array of chat sessions
   },
   { timestamps: true }
 );
