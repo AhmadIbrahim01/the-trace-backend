@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Case from "../models/case.model.js";
 
 export const addSuspect = async (req, res) => {
@@ -82,7 +83,8 @@ export const updateSuspect = async (req, res) => {
     weight,
     eyeColor,
     hairColor,
-    photo,
+    photos,
+    statements,
     blood,
   } = req.body;
 
@@ -131,7 +133,8 @@ export const updateSuspect = async (req, res) => {
       weight,
       eyeColor,
       hairColor,
-      photo,
+      photos,
+      statements,
       blood,
       updatedAt: new Date(),
     };
@@ -184,6 +187,26 @@ export const getSuspects = async (req, res) => {
 
 export const getSuspect = async (req, res) => {
   const { caseId, suspectId } = req.params;
+  if (!caseId) {
+    return res.status(400).send({
+      message: "Case ID is missing",
+    });
+  }
+  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
+    return res.status(400).send({
+      message: "Case ID is of invalid format",
+    });
+  }
+  if (!suspectId) {
+    return res.status(400).send({
+      message: "Suspect ID is missing",
+    });
+  }
+  if (suspectId && !mongoose.Types.ObjectId.isValid(suspectId)) {
+    return res.status(400).send({
+      message: "Suspect ID is of invalid format",
+    });
+  }
   try {
     const caseData = await Case.findById(caseId);
     if (!caseData) {
@@ -194,7 +217,7 @@ export const getSuspect = async (req, res) => {
 
     const suspects = caseData.suspects;
 
-    if (suspects.length == 0) {
+    if (suspects.length === 0) {
       return res.status(400).send({
         message: "No suspects",
       });
@@ -203,6 +226,12 @@ export const getSuspect = async (req, res) => {
     const suspectIndex = caseData.suspects.findIndex(
       (suspect) => suspect._id.toString() === suspectId
     );
+
+    if (suspectIndex === -1) {
+      return res.status(400).send({
+        message: "Suspect not found",
+      });
+    }
 
     const suspect = suspects[suspectIndex];
 
