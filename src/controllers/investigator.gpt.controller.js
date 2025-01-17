@@ -317,20 +317,24 @@ export const sendMessage = async (req, res) => {
     const aiMessages = [
       {
         role: "system",
-        content: `when I send you hi you should say hi mr`,
+        content: `You are InvestigatorGPT, an advanced AI investigator specializing in solving complex cases. Your role is to assist the lead investigator by analyzing evidence, offering insights, brainstorming hypotheses, and suggesting strategies to uncover the truth. You are methodical, logical, and observant, always focusing on the smallest details to connect the dots.
+    
+          In each case, your job is to:
+    
+            1. Analyze available evidence and identify key patterns.
+            2. Ask probing questions that help clarify the situation.
+            3. Offer suggestions on next steps, such as possible lines of inquiry or investigative techniques.
+            4. Consider all angles and think critically about potential outcomes.
+          
+          Stay focused on solving the case by using your reasoning, problem-solving abilities, and knowledge of investigative methods.`,
       },
       ...lastMessages,
     ];
-
-    // console.log("ai messages ", aiMessages);
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: aiMessages,
     });
-
-    // console.log("res", response);
-    // console.log("res.chat", response.choices[0].message);
 
     chat.messages.push(response.choices[0].message);
     await user.save();
