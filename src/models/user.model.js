@@ -30,6 +30,8 @@ const chatSchema = new Schema(
       ref: "Case",
       required: true,
     },
+    caseTitle: { type: String },
+    caseDescription: { type: String },
     createdAt: {
       type: Date,
       default: Date.now,

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { User } from "../models/user.model.js";
+import Case from "../models/case.model.js";
 
 import OpenAI from "openai";
 
@@ -40,10 +41,20 @@ export const addChat = async (req, res) => {
       });
     }
 
+    const caseData = await Case.findById(caseId);
+
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
     const newChat = {
       title: "New Chat",
       messages: [],
       caseId,
+      caseTitle: caseData.title,
+      caseDescription: caseData.description,
     };
 
     const chats = user.chats;
@@ -299,63 +310,73 @@ export const sendMessage = async (req, res) => {
 
     const chats = user.chats;
 
-    const chatIndex = chats.findIndex((chat) => chat._id.toString() === chatId);
+    console.log("chats", chats);
+    console.log("chats case id", chats.caseId.toString());
+    console.log("chats case id populate", chats.caseId.populate());
 
-    if (chatIndex === -1) {
-      return res.status(400).send({
-        message: "Chat not found",
-      });
-    }
-
-    const chat = chats[chatIndex];
-
-    const newMessage = {
-      role,
-      content,
-    };
-
-    let messages = chat.messages;
-    messages.push(newMessage);
-
-    if (messages.length > 5) {
-      messages = messages.slice(messages.length - 5);
-    }
-
-    const lastMessages = messages.map((msg) => ({
-      role: msg.role === "user" ? "user" : "assistant",
-      content: msg.content,
-    }));
-
-    const aiMessages = [
-      {
-        role: "system",
-        content: `You are InvestigatorGPT, an advanced AI investigator specializing in solving complex cases. Your role is to assist the lead investigator by analyzing evidence, offering insights, brainstorming hypotheses, and suggesting strategies to uncover the truth. You are methodical, logical, and observant, always focusing on the smallest details to connect the dots.
-    
-          In each case, your job is to:
-    
-            1. Analyze available evidence and identify key patterns.
-            2. Ask probing questions that help clarify the situation.
-            3. Offer suggestions on next steps, such as possible lines of inquiry or investigative techniques.
-            4. Consider all angles and think critically about potential outcomes.
-          
-          Stay focused on solving the case by using your reasoning, problem-solving abilities, and knowledge of investigative methods.`,
-      },
-      ...lastMessages,
-    ];
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: aiMessages,
+    return res.status(200).send({
+      chats,
+      caseId: chats.caseId.toString(),
+      case: chats.caseId.populate(),
     });
 
-    chat.messages.push(response.choices[0].message);
-    await user.save();
+    // const chatIndex = chats.findIndex((chat) => chat._id.toString() === chatId);
 
-    return res.status(201).send({
-      message: "Message added successfully",
-      newMessage,
-      aiResponse: response.choices[0].message,
-    });
+    // if (chatIndex === -1) {
+    //   return res.status(400).send({
+    //     message: "Chat not found",
+    //   });
+    // }
+
+    // const chat = chats[chatIndex];
+
+    // const newMessage = {
+    //   role,
+    //   content,
+    // };
+
+    // let messages = chat.messages;
+    // messages.push(newMessage);
+
+    // if (messages.length > 5) {
+    //   messages = messages.slice(messages.length - 5);
+    // }
+
+    // const lastMessages = messages.map((msg) => ({
+    //   role: msg.role === "user" ? "user" : "assistant",
+    //   content: msg.content,
+    // }));
+
+    // const aiMessages = [
+    //   {
+    //     role: "system",
+    //     content: `You are InvestigatorGPT, an advanced AI investigator specializing in solving complex cases. Your role is to assist the lead investigator by analyzing evidence, offering insights, brainstorming hypotheses, and suggesting strategies to uncover the truth. You are methodical, logical, and observant, always focusing on the smallest details to connect the dots.
+
+    //       In each case, your job is to:
+
+    //         1. Analyze available evidence and identify key patterns.
+    //         2. Ask probing questions that help clarify the situation.
+    //         3. Offer suggestions on next steps, such as possible lines of inquiry or investigative techniques.
+    //         4. Consider all angles and think critically about potential outcomes.
+
+    //       Stay focused on solving the case by using your reasoning, problem-solving abilities, and knowledge of investigative methods.`,
+    //   },
+    //   ...lastMessages,
+    // ];
+
+    // const response = await openai.chat.completions.create({
+    //   model: "gpt-3.5-turbo",
+    //   messages: aiMessages,
+    // });
+
+    // chat.messages.push(response.choices[0].message);
+    // await user.save();
+
+    // return res.status(201).send({
+    //   message: "Message added successfully",
+    //   newMessage,
+    //   aiResponse: response.choices[0].message,
+    // });
   } catch (error) {
     console.log(error.message);
     return res.status(500).send({
