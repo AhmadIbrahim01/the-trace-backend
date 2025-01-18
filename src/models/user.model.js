@@ -1,5 +1,4 @@
-import { Schema, model } from "mongoose";
-
+import mongoose, { Schema, model } from "mongoose";
 const chatMessageSchema = new Schema(
   {
     role: {
@@ -26,6 +25,11 @@ const chatSchema = new Schema(
       default: "New Chat",
     },
     messages: [chatMessageSchema],
+    caseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Case",
+      required: true,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
