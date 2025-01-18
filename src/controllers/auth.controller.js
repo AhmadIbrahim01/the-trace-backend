@@ -1,6 +1,8 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+
 export const register = async (req, res) => {
   const { firstName, lastName, email, phone, password, role, profilePicture } =
     req.body;
@@ -12,15 +14,15 @@ export const register = async (req, res) => {
       });
     }
 
-    const loweredEmail = email.toLowerCase();
+    const normalizedEmail = email.toLowerCase();
 
     const userExists = await User.findOne({
-      $or: [{ email: loweredEmail }, { phone }],
+      $or: [{ email: normalizedEmail }, { phone }],
     });
     if (userExists) {
       return res.status(409).send({
         message:
-          userExists.email === loweredEmail
+          userExists.email === normalizedEmail
             ? "Email already registered"
             : "Phone already registered",
       });
@@ -29,17 +31,20 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashed = await bcrypt.hash(password, salt);
 
-    const user = await User.create({
+    const user = new User({
       firstName,
       lastName,
-      email: loweredEmail,
+      email: normalizedEmail,
       phone,
       password: hashed,
       role,
       profilePicture,
     });
 
-    return res.status(201).send(user);
+    await user.save();
+
+    const { password: _, ...userResponse } = user.toObject();
+    return res.status(201).json(userResponse);
   } catch (error) {
     console.log(error.message);
 
@@ -51,22 +56,32 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "Email and password are required.",
+    });
+  }
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res.status(404).send({
         message: "User not found",
       });
     }
 
-    const check = await bcrypt.compare(password, user.password);
-
-    if (!check) {
-      return res.status(401).send({
-        message: "Invalid credentials",
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({
+        message: "Invalid credentials.",
       });
     }
+
+    if (user.banned) {
+      return res.status(403).json({
+        message: "Account is banned. Login failed.",
+      });
+    }
+
     const userId = user._id.toString();
 
     const expirationTime = "1h";
@@ -92,6 +107,18 @@ export const login = async (req, res) => {
 
 export const getUser = async (req, res) => {
   const userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).json({
+      message: "Missing user ID.",
+    });
+  }
+
+  if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({
+      message: "Invalid user ID format.",
+    });
+  }
+
   try {
     const user = await User.findById(userId).select("-password");
     if (!user) {
@@ -118,6 +145,12 @@ export const updateUser = async (req, res) => {
     });
   }
 
+  if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({
+      message: "Invalid user ID format.",
+    });
+  }
+
   const { firstName, lastName, email, phone, profilePicture } = req.body;
   if (!firstName || !lastName || !email || !phone) {
     return res.status(400).send({
@@ -134,8 +167,8 @@ export const updateUser = async (req, res) => {
     }
 
     if (email && email.toLowerCase() !== user.email.toLowerCase()) {
-      const loweredEmail = email.toLowerCase();
-      const userEmail = await User.findOne({ email: loweredEmail });
+      const normalizedEmail = email.toLowerCase();
+      const userEmail = await User.findOne({ email: normalizedEmail });
       if (userEmail) {
         return res.status(409).send({
           message: "Email already registered",
@@ -189,6 +222,12 @@ export const updateProfileImage = async (req, res) => {
       message: "Missing user id",
     });
   }
+  if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({
+      message: "Invalid user ID format.",
+    });
+  }
+
   const profilePicture = req.body.profilePicture;
   if (!profilePicture) {
     return res.status(400).send({
