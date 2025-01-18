@@ -102,15 +102,9 @@ export const updateSuspectStatement = async (req, res) => {
 
   const { date, statement, locationOfIncident, photo } = req.body;
 
-  if (!date || !statement || !locationOfIncident) {
+  if (!statement) {
     return res.status(400).send({
       message: "Missing required fields",
-    });
-  }
-  const parsedDate = new Date(date);
-  if (isNaN(parsedDate)) {
-    return res.status(400).send({
-      message: "Invalid date format",
     });
   }
 
@@ -143,7 +137,7 @@ export const updateSuspectStatement = async (req, res) => {
     const updatedStatement = {
       ...suspect.statements[statementIndex],
       _id: statementId,
-      date: parsedDate,
+      date,
       statement,
       locationOfIncident,
       photo,

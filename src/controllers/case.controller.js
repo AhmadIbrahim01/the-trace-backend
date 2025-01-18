@@ -47,7 +47,7 @@ export const createCase = async (req, res) => {
 
 export const getCases = async (req, res) => {
   try {
-    const cases = await Case.find({});
+    const cases = await Case.find({}).populate("investigatorId").exec();
 
     if (cases == "") {
       return res.status(500).send({

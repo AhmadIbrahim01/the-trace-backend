@@ -4,7 +4,7 @@ const chatMessageSchema = new Schema(
   {
     role: {
       type: String,
-      enum: ["user", "bot"],
+      enum: ["user", "assistant"],
       required: true,
     },
     content: {
@@ -80,7 +80,7 @@ const userSchema = new Schema(
     },
     level: { type: Number, default: 1 },
     badges: [{ type: String }],
-    chats: [chatSchema], // Array of chat sessions
+    chats: [chatSchema],
   },
   { timestamps: true }
 );

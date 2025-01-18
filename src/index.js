@@ -14,10 +14,8 @@ import adminRouter from "./routes/admin.routes.js";
 import witnessStatementsRouter from "./routes/witness.statements.routes.js";
 import suspectStatementsRouter from "./routes/suspect.statements.routes.js";
 import investigatorRouter from "./routes/investigator.routes.js";
-// import superAdminRouter from "./routes/super.admin.routes.js";
 import sketchRouter from "./routes/ai.sketch.routes.js";
 import aiStatementRouter from "./routes/ai.statement.routes.js";
-
 import investigatorGptRouter from "./routes/investigator.gpt.routes.js";
 
 const app = express();
@@ -30,13 +28,6 @@ app.use(
     origin: "*",
   })
 );
-
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173", // Allow only this domain
-//     methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific methods
-//   })
-// );
 
 app.use("/api/gpt", investigatorGptRouter);
 app.use("/api/sketches", sketchRouter);
@@ -53,7 +44,6 @@ app.use("/api/admin", adminRouter);
 app.use("/api/witness/statements", witnessStatementsRouter);
 app.use("/api/suspect/statements", suspectStatementsRouter);
 app.use("/api/investigator", investigatorRouter);
-// app.use("/api/super", superAdminRouter);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running on port ${process.env.SERVER_PORT}`);

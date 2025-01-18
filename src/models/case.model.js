@@ -138,10 +138,9 @@ export const caseSchema = new Schema(
     },
     scene: { type: String },
     caseImages: [{ type: String }],
-    // Errors in add evidence and add witness when uncomment this
     suspectSketches: [
       {
-        name: { type: String },
+        gender: { type: String },
         age: { type: String },
         description: { type: String },
         additional: { type: String },
