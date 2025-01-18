@@ -1,6 +1,7 @@
 import mongoose, { model } from "mongoose";
 import Case from "../models/case.model.js";
 import dotenv from "dotenv";
+import fs from "fs";
 
 import OpenAI from "openai";
 dotenv.config();
@@ -25,8 +26,8 @@ export const generateTextSketch = async (req, res) => {
     });
   }
 
-  const { name, age, description, additional } = req.body;
-  if (!name || !age || !description) {
+  const { gender, age, description, additional } = req.body;
+  if (!gender || !age || !description) {
     return res.status(404).send({
       message: "Missing info",
     });
@@ -40,14 +41,14 @@ export const generateTextSketch = async (req, res) => {
       });
     }
 
-    const prompt = `Create an image of a suspect named ${name}. The suspect has ${description} He is approximately in the age range ${age}. ${
+    const prompt = `Create an image of a suspect that has ${description}. The suspect is a ${gender}, approximately in the age range of ${age}. ${
       additional ? "The suspect has " + additional + "." : ""
-    } Ensure that the face is centered in the image, with the suspect's head and shoulders visible in the foreground. The lighting should be clear, with a neutral background that doesn't distract from the suspect's face.`;
+    } Ensure that the face is clearly visible and centered in the image, with the suspect's head and shoulders in the foreground. The lighting should be bright and neutral, highlighting the suspect's facial features. The background should be plain and unobtrusive to keep the focus on the face. Pay attention to details like hair color, facial expression, and any distinguishing features to make the image as realistic as possible.`;
 
     const imageResponse = await openai.images.generate({
-      model: "dall-e-2",
+      model: "dall-e-3",
       prompt,
-      size: "256x256",
+      size: "1024x1024",
     });
 
     if (!imageResponse.data || !imageResponse.data[0]?.url) {
@@ -56,7 +57,7 @@ export const generateTextSketch = async (req, res) => {
       });
     }
     const inputs = {
-      name,
+      gender,
       age,
       description,
       additional,
@@ -89,7 +90,8 @@ export const generateImageSketch = async (req, res) => {
     });
   }
 
-  const { image } = req.body;
+  const image = req.file;
+
   if (!image) {
     return res.status(400).send({
       message: "Image is missing",
@@ -104,24 +106,27 @@ export const generateImageSketch = async (req, res) => {
       });
     }
 
-    const prompt = "Transform this into a photorealistic image of a person";
-
-    const response = await openai.images.edit({
+    const responseImage = await openai.images.edit({
       model: "dall-e-2",
-      image,
-      prompt,
-      n: 1,
+      image: fs.createReadStream(image.path),
+      mask: fs.createReadStream("./uploads/transparent.png"),
+      prompt: "Transform this into a photorealistic image of a person",
       size: "256x256",
     });
 
-    if (!response.data || !response.data[0]?.url) {
+    if (!responseImage.data || !responseImage.data[0]?.url) {
       return res.status(500).send({
         message: "Failed to generate image",
       });
     }
 
-    const editedImageUrl = response.data[0].url;
+    const editedImageUrl = responseImage.data[0].url;
     console.log("Edited Image URL:", editedImageUrl);
+
+    return res.status(201).send({
+      editedImageUrl,
+      message: "Image added successfully",
+    });
   } catch (error) {
     console.log(error.message);
     return res.status(500).send({
@@ -143,9 +148,9 @@ export const saveSketch = async (req, res) => {
     });
   }
 
-  const { name, age, description, additional, image, prompt } = req.body;
+  const { gender, age, description, additional, image, prompt } = req.body;
 
-  if (!name || !age || !description || !image || !prompt) {
+  if (!gender || !age || !description || !image || !prompt) {
     return res.status(400).send({
       message: "Incomplete data",
     });
@@ -159,7 +164,7 @@ export const saveSketch = async (req, res) => {
       });
     }
     const sketch = {
-      name,
+      gender,
       age,
       description,
       additional,
@@ -177,6 +182,36 @@ export const saveSketch = async (req, res) => {
     console.log(error.message);
     return res.status(500).send({
       message: "Error happened",
+    });
+  }
+};
+
+export const getSketches = async (req, res) => {
+  const caseId = req.params.caseId;
+
+  try {
+    const caseData = await Case.findById(caseId);
+    if (!caseData) {
+      return res.status(404).send({
+        message: "Case not found",
+      });
+    }
+
+    const sketches = caseData.suspectSketches;
+
+    if (sketches.length == 0) {
+      return res.status(400).send({
+        message: "No sketches",
+      });
+    }
+
+    return res.status(200).send({
+      sketches,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send({
+      message: "Error happened ",
     });
   }
 };
