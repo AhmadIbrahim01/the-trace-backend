@@ -9,7 +9,7 @@ const openai = new OpenAI({
 });
 
 export const addChat = async (req, res) => {
-  const userId = req.params.userId;
+  const { userId, caseId } = req.params;
   if (!userId) {
     return res.status(400).send({
       message: "User ID is missing",
@@ -20,6 +20,17 @@ export const addChat = async (req, res) => {
       message: "User ID is of invalid format",
     });
   }
+  if (!caseId) {
+    return res.status(400).send({
+      message: "Case ID is missing",
+    });
+  }
+  if (caseId && !mongoose.Types.ObjectId.isValid(caseId)) {
+    return res.status(400).send({
+      message: "Case ID is of invalid format",
+    });
+  }
+
   try {
     const user = await User.findById(userId);
 
@@ -32,6 +43,7 @@ export const addChat = async (req, res) => {
     const newChat = {
       title: "New Chat",
       messages: [],
+      caseId,
     };
 
     const chats = user.chats;

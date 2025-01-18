@@ -11,7 +11,7 @@ import {
 const investigatorGptRouter = new Router();
 
 investigatorGptRouter.post("/message/:userId/:chatId?", sendMessage);
-investigatorGptRouter.post("/:userId?", addChat);
+investigatorGptRouter.post("/:userId/:caseId?", addChat);
 investigatorGptRouter.put("/:userId/:chatId?", updateChatName);
 investigatorGptRouter.delete("/:userId/:chatId?", deleteChat);
 investigatorGptRouter.get("/:userId?", getChats);
