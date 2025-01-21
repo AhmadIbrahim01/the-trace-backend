@@ -19,13 +19,41 @@ export const analyzeStatement = async (req, res) => {
   }
 
   const prompt = `
-    Analyze the following statement and provide a structured breakdown:
-    - Sentiment Analysis: Identify the emotional tone of the statement.
-    - Key Entities: Identify people, places, and objects mentioned.
-    - Inconsistencies: Detect possible contradictions or mismatches.
+  Please analyze the following statement and provide a detailed breakdown:
   
-    Statement: "${statement}"
-    `;
+  1. Sentiment Analysis
+     - Overall emotional tone (positive, negative, neutral)
+     - Emotional intensity (scale 1-5)
+     - Detected emotions (e.g., joy, anger, fear)
+     - Contextual mood indicators
+  
+  2. Key Elements
+     - People: Names, roles, relationships
+     - Places: Locations, settings, environments
+     - Objects: Physical items, concepts, abstract references
+     - Time indicators: Dates, periods, temporal references
+  
+  3. Language Analysis
+     - Key themes and topics
+     - Notable phrases or expressions
+     - Writing style (formal, casual, technical)
+     - Tone indicators (sarcasm, humor, seriousness)
+  
+  4. Critical Evaluation
+     - Internal inconsistencies or contradictions
+     - Potential ambiguities
+     - Missing context or information gaps
+     - Logical flow assessment
+  
+  5. Additional Context
+     - Cultural or social references
+     - Industry-specific terminology
+     - Relevant background information
+  
+  Statement: "${statement}"
+  
+  Please provide your analysis in a clear, structured format with specific examples and supporting evidence from the text.
+  `;
 
   try {
     const response = await openai.chat.completions.create({
