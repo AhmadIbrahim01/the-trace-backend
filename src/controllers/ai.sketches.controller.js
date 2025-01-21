@@ -41,9 +41,42 @@ export const generateTextSketch = async (req, res) => {
       });
     }
 
-    const prompt = `Create an image of a suspect that has ${description}. The suspect is a ${gender}, approximately in the age range of ${age}. ${
-      additional ? "The suspect has " + additional + "." : ""
-    } Ensure that the face is clearly visible and centered in the image, with the suspect's head and shoulders in the foreground. The lighting should be bright and neutral, highlighting the suspect's facial features. The background should be plain and unobtrusive to keep the focus on the face. Pay attention to details like hair color, facial expression, and any distinguishing features to make the image as realistic as possible.`;
+    const prompt = `Generate a realistic portrait-style image of a suspect with the following characteristics:
+
+    Physical Description:
+    - Gender: ${gender}
+    - Age Range: ${age}
+    - Primary Features: ${description}
+    ${additional ? `- Additional Characteristics: ${additional}` : ""}
+    
+    Image Specifications:
+    1. Composition
+       - Head and shoulders portrait format
+       - Face centered and clearly visible
+       - Subject facing slightly to the left at approximately 15 degrees
+       - Neutral facial expression
+       - Eye level perspective
+    
+    2. Technical Details
+       - High contrast, evenly distributed lighting
+       - Natural skin tones and textures
+       - Sharp focus on facial features
+       - Professional portrait style
+       - Resolution suitable for identification purposes
+    
+    3. Background
+       - Solid neutral gray backdrop (#E5E5E5)
+       - No distracting elements or patterns
+       - Subtle gradient lighting from left to right
+    
+    4. Essential Feature Focus
+       - Clear depiction of eye shape and color
+       - Detailed rendering of nose and mouth structure
+       - Accurate representation of hair style, color, and texture
+       - Precise rendering of any unique identifying features
+       - Natural shadowing to enhance facial structure
+    
+    Generate the image maintaining photorealistic quality while ensuring all specified characteristics are accurately represented. The final result should be suitable for identification purposes while avoiding any artistic embellishments that could mislead.`;
 
     const imageResponse = await openai.images.generate({
       model: "dall-e-3",
