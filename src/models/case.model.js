@@ -36,10 +36,6 @@ export const caseSchema = new Schema(
       ref: "User",
       required: true,
     },
-    // assignedInvestigator: {
-    //   name: { type: String },
-    // },
-
     suspects: [
       {
         name: { type: String, required: true },
@@ -107,7 +103,7 @@ export const caseSchema = new Schema(
       {
         userId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User", // Reference to User model
+          ref: "User",
           required: true,
         },
         content: { type: String, required: true },
@@ -151,8 +147,6 @@ export const caseSchema = new Schema(
   },
   { timestamps: true }
 );
-
-// export const Case = model("Case", caseSchema);
 
 const Case = mongoose.model("Case", caseSchema);
 export default Case;
